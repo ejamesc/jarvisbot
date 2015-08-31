@@ -3,6 +3,7 @@ package jarvisbot
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/tucnak/telebot"
 )
@@ -19,6 +20,32 @@ func InitJarvis(bot *telebot.Bot, lg *log.Logger) *JarvisBot {
 	return &JarvisBot{bot: bot, log: lg}
 }
 
-func (j *JarvisBot) Router(message telebot.Message) {
-	parsedMessage := message.Text
+// Wrapper struct for a message
+type message struct {
+	Cmd  string
+	Args []string
+	*telebot.Message
+}
+
+func (j *JarvisBot) Router(msg *telebot.Message) {
+	jmsg := parseMessage(msg)
+
+	switch {
+	case jmsg.Cmd == "/img":
+		j.log.Println("IMG")
+	case jmsg.Cmd == "/hello":
+		j.SayHello(jmsg)
+	case jmsg.Cmd == "/gif":
+		j.log.Println("GIF")
+	}
+}
+
+func (j *JarvisBot) SayHello(msg *message) {
+	j.bot.SendMessage(msg.Chat, "Hello there, "+msg.Sender.FirstName+"!", nil)
+}
+
+func parseMessage(msg *telebot.Message) *message {
+	msgTokens := strings.Split(msg.Text, " ")
+	cmd, args := msgTokens[0], msgTokens[1:]
+	return &message{Cmd: cmd, Args: args, Message: msg}
 }
