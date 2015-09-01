@@ -36,11 +36,10 @@ func InitJarvis(bot *telebot.Bot, lg *log.Logger, fmap FuncMap) *JarvisBot {
 	if lg == nil {
 		lg = log.New(os.Stdout, "[jarvis] ", 0)
 	}
-	j := &JarvisBot{bot: bot, log: lg}
+	j := &JarvisBot{bot: bot, log: lg, fmap: fmap}
+
 	if fmap == nil {
 		j.fmap = j.GetDefaultFuncMap()
-	} else {
-		j.fmap = fmap
 	}
 	return j
 }
@@ -62,7 +61,6 @@ func (j *JarvisBot) SetFuncMap(fmap FuncMap) {
 // Route received Telegram messages to the appropriate response functions.
 func (j *JarvisBot) Router(msg *telebot.Message) {
 	jmsg := parseMessage(msg)
-
 	execFn := j.fmap[jmsg.Cmd]
 
 	if execFn != nil {
