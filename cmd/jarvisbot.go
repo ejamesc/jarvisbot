@@ -16,7 +16,7 @@ func main() {
 	}
 
 	logger := log.New(os.Stdout, "[jarvis] ", 0)
-	jb := jarvisbot.InitJarvis(bot, logger)
+	jb := jarvisbot.InitJarvis(bot, logger, nil)
 
 	messages := make(chan telebot.Message)
 	bot.Listen(messages, 1*time.Second)
