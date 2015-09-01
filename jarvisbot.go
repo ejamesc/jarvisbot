@@ -37,6 +37,8 @@ func (j *JarvisBot) Router(msg *telebot.Message) {
 		j.SayHello(jmsg)
 	case jmsg.Cmd == "/gif":
 		j.log.Println("GIF")
+	case jmsg.Cmd == "/xchg":
+		j.Exchange(jmsg)
 	}
 }
 
