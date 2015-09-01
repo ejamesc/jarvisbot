@@ -1,19 +1,25 @@
 package jarvisbot
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"runtime"
+	"strconv"
 	"strings"
 
+	"github.com/boltdb/bolt"
 	"github.com/tucnak/telebot"
 )
+
+var exchange_rate_bucket_name = []byte("rates")
 
 // JarvisBot is the main struct. All response funcs bind to this.
 type JarvisBot struct {
 	bot  *telebot.Bot
 	log  *log.Logger
 	fmap FuncMap
+	db   *bolt.DB
 }
 
 // Wrapper struct for a message
@@ -41,6 +47,15 @@ func InitJarvis(bot *telebot.Bot, lg *log.Logger, fmap FuncMap) *JarvisBot {
 	if fmap == nil {
 		j.fmap = j.GetDefaultFuncMap()
 	}
+
+	// Setup database
+	db, err := bolt.Open("jarvis.db", 0600, nil)
+	if err != nil {
+		lg.Fatal(err)
+	}
+	j.db = db
+	createAllBuckets(db)
+
 	return j
 }
 
@@ -50,6 +65,31 @@ func (j *JarvisBot) GetDefaultFuncMap() FuncMap {
 		"/hello": j.SayHello,
 		"/echo":  j.Echo,
 		"/xchg":  j.Exchange,
+		"/rxr":   j.Retrieve,
+	}
+}
+
+// Test function to explore db.
+func (j *JarvisBot) Retrieve(msg *message) {
+	if j.ratesAreEmpty() {
+		j.RetrieveAndSaveExchangeRates()
+	}
+
+	err := j.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket(exchange_rate_bucket_name)
+		b.ForEach(func(k, v []byte) error {
+			f, err := strconv.ParseFloat(string(v), 64)
+			if err != nil {
+				return err
+			}
+			fmt.Printf("key=%s, value=%s\n", string(k), f)
+			return nil
+		})
+		return nil
+	})
+
+	if err != nil {
+		j.log.Println(err)
 	}
 }
 
@@ -68,6 +108,10 @@ func (j *JarvisBot) Router(msg *telebot.Message) {
 	}
 }
 
+func (j *JarvisBot) CloseDB() {
+	j.db.Close()
+}
+
 // GoSafely is a utility wrapper to recover and log panics in goroutines.
 // If we use naked goroutines, a panic in any one of them crashes
 // the whole program. Using GoSafely prevents this.
@@ -84,6 +128,19 @@ func (j *JarvisBot) GoSafely(fn func()) {
 
 		fn()
 	}()
+}
+
+// Ensure all buckets needed by jarvisbot are created.
+func createAllBuckets(db *bolt.DB) error {
+	// Check all buckets have been created
+	err := db.Update(func(tx *bolt.Tx) error {
+		_, err := tx.CreateBucketIfNotExists(exchange_rate_bucket_name)
+		if err != nil {
+			return fmt.Errorf("create bucket: %s", err)
+		}
+		return nil
+	})
+	return err
 }
 
 // Helper to parse incoming messages and return JarvisBot messages

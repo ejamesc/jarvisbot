@@ -1,8 +1,14 @@
 package jarvisbot
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/boltdb/bolt"
 )
 
 const ENDPOINT = "https://openexchangerates.org/api/latest.json?app_id="
@@ -13,8 +19,121 @@ func (j *JarvisBot) Exchange(msg *message) {
 	if amount == 0.0 || fromCurr == "" || toCurr == "" {
 		j.bot.SendMessage(msg.Chat, "I didn't understand that. Some sample commands that work include: \n/xchg 10 sgd in usd\n/xchg 100 vnd to sgd\n/xchg 21 usd how much arr?", nil)
 	}
+
+	fromCurrRate, toCurrRate := j.getRatesFromDB(fromCurr, toCurr)
+
+	res := amount * 1 / fromCurrRate * toCurrRate
+	displayRate := 1 / fromCurrRate * toCurrRate
+
+	strDisplayRate := strconv.FormatFloat(displayRate, 'f', 5, 64)
+	fmtAmount := strconv.FormatFloat(res, 'f', 2, 64)
+
+	j.bot.SendMessage(msg.Chat, fromCurr+" to "+toCurr+"\nRate: 1.00 : "+strDisplayRate+"\n"+strconv.FormatFloat(amount, 'f', 2, 64)+" "+fromCurr+" = "+fmtAmount+" "+toCurr, nil)
 }
 
+func (j *JarvisBot) getRatesFromDB(fromCurr, toCurr string) (float64, float64) {
+	if j.ratesAreEmpty() {
+		j.log.Println("retrieving rates due to an empty database")
+		j.RetrieveAndSaveExchangeRates()
+	}
+
+	var fromCurrRate, toCurrRate float64
+	j.db.View(func(tx *bolt.Tx) error {
+		var err error
+		b := tx.Bucket(exchange_rate_bucket_name)
+		v := b.Get([]byte(fromCurr))
+		if v != nil {
+			fromCurrRate, err = strconv.ParseFloat(string(v), 64)
+			if err != nil {
+				return err
+			}
+		}
+
+		v = b.Get([]byte(toCurr))
+		if v != nil {
+			toCurrRate, err = strconv.ParseFloat(string(v), 64)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+
+	return fromCurrRate, toCurrRate
+}
+
+// RetrieveAndSaveExchangeRates retrieves exchange rates and saves it to DB
+func (j *JarvisBot) RetrieveAndSaveExchangeRates() {
+	rates, err := RetrieveExchangeRates()
+	if err != nil {
+		j.log.Printf("error retrieving rates: %s", err)
+	}
+
+	err = j.db.Batch(func(tx *bolt.Tx) error {
+		b := tx.Bucket(exchange_rate_bucket_name)
+		err := b.Put([]byte("timestamp"), []byte(strconv.Itoa(rates.UnixTimestamp)))
+		if err != nil {
+			return fmt.Errorf("error saving timestamp %s to db: %s", strconv.Itoa(rates.UnixTimestamp), err)
+		}
+
+		for k, v := range rates.Rates {
+			err := b.Put([]byte(k), []byte(strconv.FormatFloat(v, 'f', -1, 64)))
+			if err != nil {
+				return fmt.Errorf("error saving value %s:%f to db: %s", k, v, err)
+			}
+		}
+		return nil
+	})
+
+	if err != nil {
+		j.log.Printf("error saving exchange rates: %s", err)
+	}
+}
+
+// Checks to see if the rates database
+func (j *JarvisBot) ratesAreEmpty() bool {
+	res := true
+	j.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket(exchange_rate_bucket_name)
+		stats := b.Stats()
+		if stats.KeyN > 0 {
+			res = false
+		}
+		return nil
+	})
+	return res
+}
+
+// Rates stores currency exchange rates
+type Rates struct {
+	UnixTimestamp int                `json:"timestamp"`
+	Base          string             `json:"base"`
+	Rates         map[string]float64 `json:"rates"`
+}
+
+// Retrieves exchange rates from the OpenExchangeAPI
+func RetrieveExchangeRates() (*Rates, error) {
+	resp, err := http.Get(ENDPOINT + OPEN_EXCHANGE_RATE_API)
+	if err != nil {
+		return nil, err
+	}
+
+	jsonBody, err := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	var rates Rates
+	err = json.Unmarshal(jsonBody, &rates)
+	if err != nil {
+		return nil, err
+	}
+
+	return &rates, nil
+}
+
+// Helper functions
 func parseArgs(args []string) (amount float64, fromCurr, toCurr string) {
 	amount = 0.0
 	fromCurr, toCurr = "", ""
@@ -43,183 +162,187 @@ func parseArgs(args []string) (amount float64, fromCurr, toCurr string) {
 }
 
 var currencyCode = map[string]string{
-	"RINGGIT": "MYR",
-	"RM":      "MYR",
-	"YEN":     "JPY",
-	"YUAN":    "CNY",
-	"EURO":    "EUR",
-	"DONG":    "VND",
-	"AED":     "AED",
-	"AFN":     "AFN",
-	"ALL":     "ALL",
-	"AMD":     "AMD",
-	"ANG":     "ANG",
-	"AOA":     "AOA",
-	"ARS":     "ARS",
-	"AUD":     "AUD",
-	"AWG":     "AWG",
-	"AZN":     "AZN",
-	"BAM":     "BAM",
-	"BBD":     "BBD",
-	"BDT":     "BDT",
-	"BGN":     "BGN",
-	"BHD":     "BHD",
-	"BIF":     "BIF",
-	"BMD":     "BMD",
-	"BND":     "BND",
-	"BOB":     "BOB",
-	"BRL":     "BRL",
-	"BSD":     "BSD",
-	"BTC":     "BTC",
-	"BTN":     "BTN",
-	"BWP":     "BWP",
-	"BYR":     "BYR",
-	"BZD":     "BZD",
-	"CAD":     "CAD",
-	"CDF":     "CDF",
-	"CHF":     "CHF",
-	"CLF":     "CLF",
-	"CLP":     "CLP",
-	"CNY":     "CNY",
-	"COP":     "COP",
-	"CRC":     "CRC",
-	"CUC":     "CUC",
-	"CUP":     "CUP",
-	"CVE":     "CVE",
-	"CZK":     "CZK",
-	"DJF":     "DJF",
-	"DKK":     "DKK",
-	"DOP":     "DOP",
-	"DZD":     "DZD",
-	"EEK":     "EEK",
-	"EGP":     "EGP",
-	"ERN":     "ERN",
-	"ETB":     "ETB",
-	"EUR":     "EUR",
-	"FJD":     "FJD",
-	"FKP":     "FKP",
-	"GBP":     "GBP",
-	"GEL":     "GEL",
-	"GGP":     "GGP",
-	"GHS":     "GHS",
-	"GIP":     "GIP",
-	"GMD":     "GMD",
-	"GNF":     "GNF",
-	"GTQ":     "GTQ",
-	"GYD":     "GYD",
-	"HKD":     "HKD",
-	"HNL":     "HNL",
-	"HRK":     "HRK",
-	"HTG":     "HTG",
-	"HUF":     "HUF",
-	"IDR":     "IDR",
-	"ILS":     "ILS",
-	"IMP":     "IMP",
-	"INR":     "INR",
-	"IQD":     "IQD",
-	"IRR":     "IRR",
-	"ISK":     "ISK",
-	"JEP":     "JEP",
-	"JMD":     "JMD",
-	"JOD":     "JOD",
-	"JPY":     "JPY",
-	"KES":     "KES",
-	"KGS":     "KGS",
-	"KHR":     "KHR",
-	"KMF":     "KMF",
-	"KPW":     "KPW",
-	"KRW":     "KRW",
-	"KWD":     "KWD",
-	"KYD":     "KYD",
-	"KZT":     "KZT",
-	"LAK":     "LAK",
-	"LBP":     "LBP",
-	"LKR":     "LKR",
-	"LRD":     "LRD",
-	"LSL":     "LSL",
-	"LTL":     "LTL",
-	"LVL":     "LVL",
-	"LYD":     "LYD",
-	"MAD":     "MAD",
-	"MDL":     "MDL",
-	"MGA":     "MGA",
-	"MKD":     "MKD",
-	"MMK":     "MMK",
-	"MNT":     "MNT",
-	"MOP":     "MOP",
-	"MRO":     "MRO",
-	"MTL":     "MTL",
-	"MUR":     "MUR",
-	"MVR":     "MVR",
-	"MWK":     "MWK",
-	"MXN":     "MXN",
-	"MYR":     "MYR",
-	"MZN":     "MZN",
-	"NAD":     "NAD",
-	"NGN":     "NGN",
-	"NIO":     "NIO",
-	"NOK":     "NOK",
-	"NPR":     "NPR",
-	"NZD":     "NZD",
-	"OMR":     "OMR",
-	"PAB":     "PAB",
-	"PEN":     "PEN",
-	"PGK":     "PGK",
-	"PHP":     "PHP",
-	"PKR":     "PKR",
-	"PLN":     "PLN",
-	"PYG":     "PYG",
-	"QAR":     "QAR",
-	"RON":     "RON",
-	"RSD":     "RSD",
-	"RUB":     "RUB",
-	"RWF":     "RWF",
-	"SAR":     "SAR",
-	"SBD":     "SBD",
-	"SCR":     "SCR",
-	"SDG":     "SDG",
-	"SEK":     "SEK",
-	"SGD":     "SGD",
-	"SHP":     "SHP",
-	"SLL":     "SLL",
-	"SOS":     "SOS",
-	"SRD":     "SRD",
-	"STD":     "STD",
-	"SVC":     "SVC",
-	"SYP":     "SYP",
-	"SZL":     "SZL",
-	"THB":     "THB",
-	"TJS":     "TJS",
-	"TMT":     "TMT",
-	"TND":     "TND",
-	"TOP":     "TOP",
-	"TRY":     "TRY",
-	"TTD":     "TTD",
-	"TWD":     "TWD",
-	"TZS":     "TZS",
-	"UAH":     "UAH",
-	"UGX":     "UGX",
-	"USD":     "USD",
-	"UYU":     "UYU",
-	"UZS":     "UZS",
-	"VEF":     "VEF",
-	"VND":     "VND",
-	"VUV":     "VUV",
-	"WST":     "WST",
-	"XAF":     "XAF",
-	"XAG":     "XAG",
-	"XAU":     "XAU",
-	"XCD":     "XCD",
-	"XDR":     "XDR",
-	"XOF":     "XOF",
-	"XPD":     "XPD",
-	"XPF":     "XPF",
-	"XPT":     "XPT",
-	"YER":     "YER",
-	"ZAR":     "ZAR",
-	"ZMK":     "ZMK",
-	"ZMW":     "ZMW",
-	"ZWL":     "ZWL",
+	"RINGGIT":  "MYR",
+	"SING":     "SGD",
+	"SG":       "SGD",
+	"RMB":      "CNY",
+	"RENMINBI": "CNY",
+	"RM":       "MYR",
+	"YEN":      "JPY",
+	"YUAN":     "CNY",
+	"EURO":     "EUR",
+	"DONG":     "VND",
+	"AED":      "AED",
+	"AFN":      "AFN",
+	"ALL":      "ALL",
+	"AMD":      "AMD",
+	"ANG":      "ANG",
+	"AOA":      "AOA",
+	"ARS":      "ARS",
+	"AUD":      "AUD",
+	"AWG":      "AWG",
+	"AZN":      "AZN",
+	"BAM":      "BAM",
+	"BBD":      "BBD",
+	"BDT":      "BDT",
+	"BGN":      "BGN",
+	"BHD":      "BHD",
+	"BIF":      "BIF",
+	"BMD":      "BMD",
+	"BND":      "BND",
+	"BOB":      "BOB",
+	"BRL":      "BRL",
+	"BSD":      "BSD",
+	"BTC":      "BTC",
+	"BTN":      "BTN",
+	"BWP":      "BWP",
+	"BYR":      "BYR",
+	"BZD":      "BZD",
+	"CAD":      "CAD",
+	"CDF":      "CDF",
+	"CHF":      "CHF",
+	"CLF":      "CLF",
+	"CLP":      "CLP",
+	"CNY":      "CNY",
+	"COP":      "COP",
+	"CRC":      "CRC",
+	"CUC":      "CUC",
+	"CUP":      "CUP",
+	"CVE":      "CVE",
+	"CZK":      "CZK",
+	"DJF":      "DJF",
+	"DKK":      "DKK",
+	"DOP":      "DOP",
+	"DZD":      "DZD",
+	"EEK":      "EEK",
+	"EGP":      "EGP",
+	"ERN":      "ERN",
+	"ETB":      "ETB",
+	"EUR":      "EUR",
+	"FJD":      "FJD",
+	"FKP":      "FKP",
+	"GBP":      "GBP",
+	"GEL":      "GEL",
+	"GGP":      "GGP",
+	"GHS":      "GHS",
+	"GIP":      "GIP",
+	"GMD":      "GMD",
+	"GNF":      "GNF",
+	"GTQ":      "GTQ",
+	"GYD":      "GYD",
+	"HKD":      "HKD",
+	"HNL":      "HNL",
+	"HRK":      "HRK",
+	"HTG":      "HTG",
+	"HUF":      "HUF",
+	"IDR":      "IDR",
+	"ILS":      "ILS",
+	"IMP":      "IMP",
+	"INR":      "INR",
+	"IQD":      "IQD",
+	"IRR":      "IRR",
+	"ISK":      "ISK",
+	"JEP":      "JEP",
+	"JMD":      "JMD",
+	"JOD":      "JOD",
+	"JPY":      "JPY",
+	"KES":      "KES",
+	"KGS":      "KGS",
+	"KHR":      "KHR",
+	"KMF":      "KMF",
+	"KPW":      "KPW",
+	"KRW":      "KRW",
+	"KWD":      "KWD",
+	"KYD":      "KYD",
+	"KZT":      "KZT",
+	"LAK":      "LAK",
+	"LBP":      "LBP",
+	"LKR":      "LKR",
+	"LRD":      "LRD",
+	"LSL":      "LSL",
+	"LTL":      "LTL",
+	"LVL":      "LVL",
+	"LYD":      "LYD",
+	"MAD":      "MAD",
+	"MDL":      "MDL",
+	"MGA":      "MGA",
+	"MKD":      "MKD",
+	"MMK":      "MMK",
+	"MNT":      "MNT",
+	"MOP":      "MOP",
+	"MRO":      "MRO",
+	"MTL":      "MTL",
+	"MUR":      "MUR",
+	"MVR":      "MVR",
+	"MWK":      "MWK",
+	"MXN":      "MXN",
+	"MYR":      "MYR",
+	"MZN":      "MZN",
+	"NAD":      "NAD",
+	"NGN":      "NGN",
+	"NIO":      "NIO",
+	"NOK":      "NOK",
+	"NPR":      "NPR",
+	"NZD":      "NZD",
+	"OMR":      "OMR",
+	"PAB":      "PAB",
+	"PEN":      "PEN",
+	"PGK":      "PGK",
+	"PHP":      "PHP",
+	"PKR":      "PKR",
+	"PLN":      "PLN",
+	"PYG":      "PYG",
+	"QAR":      "QAR",
+	"RON":      "RON",
+	"RSD":      "RSD",
+	"RUB":      "RUB",
+	"RWF":      "RWF",
+	"SAR":      "SAR",
+	"SBD":      "SBD",
+	"SCR":      "SCR",
+	"SDG":      "SDG",
+	"SEK":      "SEK",
+	"SGD":      "SGD",
+	"SHP":      "SHP",
+	"SLL":      "SLL",
+	"SOS":      "SOS",
+	"SRD":      "SRD",
+	"STD":      "STD",
+	"SVC":      "SVC",
+	"SYP":      "SYP",
+	"SZL":      "SZL",
+	"THB":      "THB",
+	"TJS":      "TJS",
+	"TMT":      "TMT",
+	"TND":      "TND",
+	"TOP":      "TOP",
+	"TRY":      "TRY",
+	"TTD":      "TTD",
+	"TWD":      "TWD",
+	"TZS":      "TZS",
+	"UAH":      "UAH",
+	"UGX":      "UGX",
+	"USD":      "USD",
+	"UYU":      "UYU",
+	"UZS":      "UZS",
+	"VEF":      "VEF",
+	"VND":      "VND",
+	"VUV":      "VUV",
+	"WST":      "WST",
+	"XAF":      "XAF",
+	"XAG":      "XAG",
+	"XAU":      "XAU",
+	"XCD":      "XCD",
+	"XDR":      "XDR",
+	"XOF":      "XOF",
+	"XPD":      "XPD",
+	"XPF":      "XPF",
+	"XPT":      "XPT",
+	"YER":      "YER",
+	"ZAR":      "ZAR",
+	"ZMK":      "ZMK",
+	"ZMW":      "ZMW",
+	"ZWL":      "ZWL",
 }
 
 var currencyName = map[string]string{

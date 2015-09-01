@@ -6,6 +6,11 @@
 	],
 	"Deps": [
 		{
+			"ImportPath": "github.com/boltdb/bolt",
+			"Comment": "v1.0-119-g90fef38",
+			"Rev": "90fef389f98027ca55594edd7dbd6e7f3926fdad"
+		},
+		{
 			"ImportPath": "github.com/tucnak/telebot",
 			"Comment": "v1.0-9-g5db9cc7",
 			"Rev": "5db9cc7c56d68112e1735db1346e28aa4841d736"
