@@ -18,6 +18,7 @@ func (j *JarvisBot) Exchange(msg *message) {
 	amount, fromCurr, toCurr := parseArgs(msg.Args)
 	if amount == 0.0 || fromCurr == "" || toCurr == "" {
 		j.bot.SendMessage(msg.Chat, "I didn't understand that. Some sample commands that work include: \n/xchg 10 sgd in usd\n/xchg 100 vnd to sgd\n/xchg 21 usd how much arr?", nil)
+		return
 	}
 
 	fromCurrRate, toCurrRate := j.getRatesFromDB(fromCurr, toCurr)
@@ -42,19 +43,15 @@ func (j *JarvisBot) getRatesFromDB(fromCurr, toCurr string) (float64, float64) {
 		var err error
 		b := tx.Bucket(exchange_rate_bucket_name)
 		v := b.Get([]byte(fromCurr))
-		if v != nil {
-			fromCurrRate, err = strconv.ParseFloat(string(v), 64)
-			if err != nil {
-				return err
-			}
+		fromCurrRate, err = strconv.ParseFloat(string(v), 64)
+		if err != nil {
+			return err
 		}
 
 		v = b.Get([]byte(toCurr))
-		if v != nil {
-			toCurrRate, err = strconv.ParseFloat(string(v), 64)
-			if err != nil {
-				return err
-			}
+		toCurrRate, err = strconv.ParseFloat(string(v), 64)
+		if err != nil {
+			return err
 		}
 		return nil
 	})
@@ -158,11 +155,18 @@ func parseArgs(args []string) (amount float64, fromCurr, toCurr string) {
 	if toCurr == "" && fromCurr != "" {
 		toCurr = "SGD"
 	}
+	if amount == 0.0 {
+		amount = 1.0
+	}
 	return amount, fromCurr, toCurr
 }
 
 var currencyCode = map[string]string{
 	"RINGGIT":  "MYR",
+	"BAHT":     "THB",
+	"POUNDS":   "GBP",
+	"POUND":    "GBP",
+	"RUPIAH":   "IDR",
 	"SING":     "SGD",
 	"SG":       "SGD",
 	"RMB":      "CNY",

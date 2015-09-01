@@ -19,6 +19,15 @@ func main() {
 	jb := jarvisbot.InitJarvis(bot, logger, nil)
 	defer jb.CloseDB()
 
+	jb.GoSafely(func() {
+		logger.Println("Scheduling exchange rate update")
+		for {
+			time.Sleep(1 * time.Hour)
+			jb.RetrieveAndSaveExchangeRates()
+			logger.Println("Exchange rates updated!")
+		}
+	})
+
 	messages := make(chan telebot.Message)
 	bot.Listen(messages, 1*time.Second)
 
