@@ -18,16 +18,22 @@ func (j *JarvisBot) Exchange(msg *message) {
 func parseArgs(args []string) (amount float64, fromCurr, toCurr string) {
 	amount = 0.0
 	fromCurr, toCurr = "", ""
+
 	for _, a := range args {
 		s := strings.ToUpper(a)
+
 		if currencyCode[s] != "" {
-			if fromCurr != "" {
+			if fromCurr == "" {
 				fromCurr = currencyCode[s]
-			} else if toCurr != "" {
+			} else if toCurr == "" {
 				toCurr = currencyCode[s]
 			}
-		} else if f, err := strconv.ParseFloat(a, 64); err != nil {
-			amount = f
+		} else {
+			f, err := strconv.ParseFloat(a, 64)
+			// We take the first number in the string only.
+			if err == nil && amount == 0.0 {
+				amount = f
+			}
 		}
 	}
 	if toCurr == "" && fromCurr != "" {
