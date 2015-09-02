@@ -10,15 +10,22 @@ import (
 	"time"
 
 	"github.com/boltdb/bolt"
+	"github.com/tucnak/telebot"
 )
 
 const ENDPOINT = "https://openexchangerates.org/api/latest.json?app_id="
 
 // Exchange is used to perform an exchange rate conversion
 func (j *JarvisBot) Exchange(msg *message) {
+	if len(msg.Args) == 0 {
+		so := &telebot.SendOptions{ReplyMarkup: telebot.ReplyMarkup{ForceReply: true}}
+		j.bot.SendMessage(msg.Chat, "/xchg: Currency Conversion\nHere are some commands to try: \n* 10 sgd in usd\n* 100 vnd to sgd\n* 21 usd how much arr?\n\n\U0001F4A1 You could also use this format for faster results:\n/xchg 10 sgd in usd", so)
+		return
+	}
+
 	amount, fromCurr, toCurr := parseArgs(msg.Args)
 	if amount == 0.0 || fromCurr == "" || toCurr == "" {
-		j.bot.SendMessage(msg.Chat, "I didn't understand that. Some sample commands that work include: \n/xchg 10 sgd in usd\n/xchg 100 vnd to sgd\n/xchg 21 usd how much arr?", nil)
+		j.bot.SendMessage(msg.Chat, "I didn't understand that. Here are some commands to try: \n/xchg 10 sgd in usd\n/xchg 100 vnd to sgd\n/xchg 21 usd how much arr?", nil)
 		return
 	}
 

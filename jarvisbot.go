@@ -100,7 +100,7 @@ func (j *JarvisBot) SetFuncMap(fmap FuncMap) {
 
 // Route received Telegram messages to the appropriate response functions.
 func (j *JarvisBot) Router(msg *telebot.Message) {
-	jmsg := parseMessage(msg)
+	jmsg := j.parseMessage(msg)
 	execFn := j.fmap[jmsg.Cmd]
 
 	if execFn != nil {
@@ -144,14 +144,28 @@ func createAllBuckets(db *bolt.DB) error {
 }
 
 // Helper to parse incoming messages and return JarvisBot messages
-func parseMessage(msg *telebot.Message) *message {
-	msgTokens := strings.Split(msg.Text, " ")
-	cmd, args := msgTokens[0], msgTokens[1:]
-	// Deal with commands of the form command@JarvisBot, which appear in
-	// group chats.
-	if strings.Contains(cmd, "@") {
-		c := strings.Split(cmd, "@")
-		cmd = c[0]
+func (j *JarvisBot) parseMessage(msg *telebot.Message) *message {
+	cmd := ""
+	args := []string{}
+
+	if msg.IsReply() {
+		for k, _ := range j.fmap {
+			if strings.Contains(msg.ReplyTo.Text, k) {
+				cmd = k
+				args = strings.Split(msg.Text, " ")
+				break
+			}
+		}
+	} else {
+		msgTokens := strings.Split(msg.Text, " ")
+		cmd, args = msgTokens[0], msgTokens[1:]
+		// Deal with commands of the form command@JarvisBot, which appear in
+		// group chats.
+		if strings.Contains(cmd, "@") {
+			c := strings.Split(cmd, "@")
+			cmd = c[0]
+		}
 	}
+
 	return &message{Cmd: cmd, Args: args, Message: msg}
 }
