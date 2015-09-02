@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/boltdb/bolt"
 )
@@ -32,6 +33,7 @@ func (j *JarvisBot) Exchange(msg *message) {
 	j.bot.SendMessage(msg.Chat, fromCurr+" to "+toCurr+"\nRate: 1.00 : "+strDisplayRate+"\n"+strconv.FormatFloat(amount, 'f', 2, 64)+" "+fromCurr+" = "+fmtAmount+" "+toCurr, nil)
 }
 
+// Retrieve rates from DB.
 func (j *JarvisBot) getRatesFromDB(fromCurr, toCurr string) (float64, float64) {
 	if j.ratesAreEmpty() {
 		j.log.Println("retrieving rates due to an empty database")
@@ -63,7 +65,7 @@ func (j *JarvisBot) getRatesFromDB(fromCurr, toCurr string) (float64, float64) {
 func (j *JarvisBot) RetrieveAndSaveExchangeRates() {
 	rates, err := RetrieveExchangeRates()
 	if err != nil {
-		j.log.Printf("error retrieving rates: %s", err)
+		j.log.Printf("[%s] error retrieving rates: %s", time.Now().Format(time.RFC3339), err)
 	}
 
 	err = j.db.Batch(func(tx *bolt.Tx) error {
