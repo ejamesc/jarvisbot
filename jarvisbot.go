@@ -147,5 +147,11 @@ func createAllBuckets(db *bolt.DB) error {
 func parseMessage(msg *telebot.Message) *message {
 	msgTokens := strings.Split(msg.Text, " ")
 	cmd, args := msgTokens[0], msgTokens[1:]
+	// Deal with commands of the form command@JarvisBot, which appear in
+	// group chats.
+	if strings.Contains(cmd, "@") {
+		c := strings.Split(cmd, "@")
+		cmd = c[0]
+	}
 	return &message{Cmd: cmd, Args: args, Message: msg}
 }
