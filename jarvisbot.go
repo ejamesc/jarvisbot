@@ -39,6 +39,8 @@ type ResponseFunc func(m *message)
 // lg and fmap are optional. If no FuncMap is provided, JarvisBot will
 // be initialised with a default FuncMap
 func InitJarvis(bot *telebot.Bot, lg *log.Logger, fmap FuncMap) *JarvisBot {
+	// We'll use random numbers throughout JarvisBot
+	rand.Seed(time.Now().UTC().UnixNano())
 	if lg == nil {
 		lg = log.New(os.Stdout, "[jarvis] ", 0)
 	}
@@ -67,6 +69,8 @@ func (j *JarvisBot) GetDefaultFuncMap() FuncMap {
 		"/xchg":  j.Exchange,
 		"/rxr":   j.Retrieve,
 		"/clear": j.Clear,
+		"/c":     j.Clear,
+		"/img":   j.ImageSearch,
 	}
 }
 
