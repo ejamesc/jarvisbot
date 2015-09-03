@@ -73,7 +73,7 @@ func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 	// This supports huge files.
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
-		j.log.Printf("error writing request body to file")
+		j.log.Printf("error writing request body to file: %s", err)
 		return
 	}
 
@@ -83,6 +83,12 @@ func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 		return
 	}
 
-	photo := &telebot.Photo{Thumbnail: telebot.Thumbnail{File: tFile}}
-	j.bot.SendPhoto(msg.Chat, photo, nil)
+	if ext == ".gif" {
+		j.bot.SendChatAction(msg.Chat, telebot.UploadingPhoto)
+		doc := &telebot.Document{File: tFile, Preview: telebot.Thumbnail{File: tFile}, Mime: "image/gif"}
+		j.bot.SendDocument(msg.Chat, doc, nil)
+	} else {
+		photo := &telebot.Photo{Thumbnail: telebot.Thumbnail{File: tFile}}
+		j.bot.SendPhoto(msg.Chat, photo, nil)
+	}
 }
