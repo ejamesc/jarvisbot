@@ -54,6 +54,11 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 	}
 
 	// Randomly select an image
+	if len(searchRes.ResponseData.Results) == 0 {
+		j.log.Printf("results empty for query '%s'", q)
+		return
+	}
+
 	n := rand.Intn(len(searchRes.ResponseData.Results))
 	r := searchRes.ResponseData.Results[n]
 	u, err := r.imgUrl()
