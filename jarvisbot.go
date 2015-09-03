@@ -3,10 +3,12 @@ package jarvisbot
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"runtime"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/boltdb/bolt"
 	"github.com/tucnak/telebot"
@@ -16,6 +18,7 @@ var exchange_rate_bucket_name = []byte("rates")
 
 // JarvisBot is the main struct. All response funcs bind to this.
 type JarvisBot struct {
+	Name string // The name of the bot registered with Botfather
 	bot  *telebot.Bot
 	log  *log.Logger
 	fmap FuncMap
@@ -38,13 +41,14 @@ type ResponseFunc func(m *message)
 // Initialise a JarvisBot.
 // lg and fmap are optional. If no FuncMap is provided, JarvisBot will
 // be initialised with a default FuncMap
-func InitJarvis(bot *telebot.Bot, lg *log.Logger, fmap FuncMap) *JarvisBot {
+func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, fmap FuncMap) *JarvisBot {
 	// We'll use random numbers throughout JarvisBot
 	rand.Seed(time.Now().UTC().UnixNano())
+
 	if lg == nil {
 		lg = log.New(os.Stdout, "[jarvis] ", 0)
 	}
-	j := &JarvisBot{bot: bot, log: lg, fmap: fmap}
+	j := &JarvisBot{Name: name, bot: bot, log: lg, fmap: fmap}
 
 	if fmap == nil {
 		j.fmap = j.GetDefaultFuncMap()
@@ -64,13 +68,15 @@ func InitJarvis(bot *telebot.Bot, lg *log.Logger, fmap FuncMap) *JarvisBot {
 // Get the built-in, default FuncMap.
 func (j *JarvisBot) GetDefaultFuncMap() FuncMap {
 	return FuncMap{
-		"/hello": j.SayHello,
-		"/echo":  j.Echo,
-		"/xchg":  j.Exchange,
-		"/rxr":   j.Retrieve,
-		"/clear": j.Clear,
-		"/c":     j.Clear,
-		"/img":   j.ImageSearch,
+		"/hello":  j.SayHello,
+		"/echo":   j.Echo,
+		"/x":      j.Exchange,
+		"/xchg":   j.Exchange,
+		"/clear":  j.Clear,
+		"/c":      j.Clear,
+		"/img":    j.ImageSearch,
+		"/psi":    j.PSI,
+		"/source": j.Source,
 	}
 }
 
@@ -163,7 +169,7 @@ func (j *JarvisBot) parseMessage(msg *telebot.Message) *message {
 		}
 	} else {
 		msgTokens := strings.Split(msg.Text, " ")
-		cmd, args = msgTokens[0], msgTokens[1:]
+		cmd, args = strings.ToLower(msgTokens[0]), msgTokens[1:]
 		// Deal with commands of the form command@JarvisBot, which appear in
 		// group chats.
 		if strings.Contains(cmd, "@") {

@@ -156,7 +156,7 @@ func parseArgs(args []string) (amount float64, fromCurr, toCurr string) {
 		} else {
 			f, err := strconv.ParseFloat(a, 64)
 			// We take the first number in the string only.
-			if err == nil && amount == 0.0 {
+			if err == nil && amount == 0.0 && f > 0 {
 				amount = f
 			}
 		}

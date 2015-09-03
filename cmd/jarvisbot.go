@@ -16,7 +16,8 @@ func main() {
 	}
 
 	logger := log.New(os.Stdout, "[jarvis] ", 0)
-	jb := jarvisbot.InitJarvis(bot, logger, nil)
+	// TODO: Shift settings out to JSON
+	jb := jarvisbot.InitJarvis("JarvisChenBot", bot, logger, nil)
 	defer jb.CloseDB()
 
 	jb.GoSafely(func() {
