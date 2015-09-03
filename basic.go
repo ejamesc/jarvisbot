@@ -8,7 +8,7 @@ func (j *JarvisBot) SayHello(msg *message) {
 
 func (j *JarvisBot) Echo(msg *message) {
 	if len(msg.Args) == 0 {
-		so := &telebot.SendOptions{ReplyMarkup: telebot.ReplyMarkup{ForceReply: true}}
+		so := &telebot.SendOptions{ReplyTo: *msg.Message, ReplyMarkup: telebot.ReplyMarkup{ForceReply: true, Selective: true}}
 		j.bot.SendMessage(msg.Chat, "/echo Jarvis Parrot Mode \U0001F426\nWhat do you want me to parrot?\n\n", so)
 	}
 	response := ""

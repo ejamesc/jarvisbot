@@ -24,7 +24,7 @@ func main() {
 		for {
 			time.Sleep(1 * time.Hour)
 			jb.RetrieveAndSaveExchangeRates()
-			logger.Println("Exchange rates updated!")
+			logger.Printf("[%s] exchange rates updated!", time.Now().Format(time.RFC3339))
 		}
 	})
 
