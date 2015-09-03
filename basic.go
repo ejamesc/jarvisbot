@@ -17,3 +17,7 @@ func (j *JarvisBot) Echo(msg *message) {
 	}
 	j.bot.SendMessage(msg.Chat, response, nil)
 }
+
+func (j *JarvisBot) Clear(msg *message) {
+	j.bot.SendMessage(msg.Chat, "Lol, sure.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCleared.", nil)
+}

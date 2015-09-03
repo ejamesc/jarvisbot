@@ -66,6 +66,7 @@ func (j *JarvisBot) GetDefaultFuncMap() FuncMap {
 		"/echo":  j.Echo,
 		"/xchg":  j.Exchange,
 		"/rxr":   j.Retrieve,
+		"/clear": j.Clear,
 	}
 }
 
