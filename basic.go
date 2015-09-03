@@ -21,3 +21,7 @@ func (j *JarvisBot) Echo(msg *message) {
 func (j *JarvisBot) Clear(msg *message) {
 	j.bot.SendMessage(msg.Chat, "Lol, sure.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCleared.", nil)
 }
+
+func (j *JarvisBot) Source(msg *message) {
+	j.bot.SendMessage(msg.Chat, "Touch me: https://github.com/ejamesc/jarvisbot", nil)
+}
