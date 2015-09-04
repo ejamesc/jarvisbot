@@ -2,12 +2,12 @@ package jarvisbot
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/tucnak/telebot"
 )
@@ -58,7 +58,7 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 		n := rand.Intn(len(searchRes.ResponseData.Results))
 		r := searchRes.ResponseData.Results[n]
 		u, err := r.imgUrl()
-		fmt.Println(u.String())
+		j.log.Printf("[%s] img url: %s", time.Now().Format(time.RFC3339), u.String())
 		if err != nil {
 			j.log.Printf("error generating url based on search result %v: %s", r, err)
 			return

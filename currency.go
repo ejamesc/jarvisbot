@@ -70,7 +70,7 @@ func (j *JarvisBot) getRatesFromDB(fromCurr, toCurr string) (float64, float64) {
 
 // RetrieveAndSaveExchangeRates retrieves exchange rates and saves it to DB
 func (j *JarvisBot) RetrieveAndSaveExchangeRates() {
-	rates, err := RetrieveExchangeRates()
+	rates, err := j.RetrieveExchangeRates()
 	if err != nil {
 		j.log.Printf("[%s] error retrieving rates: %s", time.Now().Format(time.RFC3339), err)
 	}
@@ -118,8 +118,12 @@ type Rates struct {
 }
 
 // Retrieves exchange rates from the OpenExchangeAPI
-func RetrieveExchangeRates() (*Rates, error) {
-	resp, err := http.Get(ENDPOINT + OPEN_EXCHANGE_RATE_API)
+func (j *JarvisBot) RetrieveExchangeRates() (*Rates, error) {
+	if j.keys["open_exchange"] != "" {
+		err := fmt.Errorf("no open exchange api key!")
+		return nil, err
+	}
+	resp, err := http.Get(ENDPOINT + j.keys["open_exchange"])
 	if err != nil {
 		return nil, err
 	}

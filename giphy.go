@@ -39,8 +39,8 @@ func (j *JarvisBot) GifSearch(msg *message) {
 	q := url.QueryEscape(rawQuery)
 
 	key := ""
-	if j.keys["giphy"] != "" {
-		key = j.keys["giphy"]
+	if j.keys["giphy_api_key"] != "" {
+		key = j.keys["giphy_api_key"]
 	} else {
 		key = GIPHY_PUBLIC_BETA_KEY
 	}
@@ -71,7 +71,7 @@ func (j *JarvisBot) GifSearch(msg *message) {
 		n := rand.Intn(len(searchRes.Data))
 		r := searchRes.Data[n]
 		u, err := r.getUrl()
-		fmt.Println(u.String())
+		j.log.Printf("[%s] gif url: %s", time.Now().Format(time.RFC3339), u.String())
 		if err != nil {
 			j.log.Printf("error generating url based on search result %v: %s", r, err)
 			return

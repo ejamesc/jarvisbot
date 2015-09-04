@@ -1,2 +1,3 @@
 cmd/config.go
 config.go
+config.json

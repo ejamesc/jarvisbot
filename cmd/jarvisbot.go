@@ -1,22 +1,44 @@
 package main
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"os"
+	"path"
 	"time"
 
 	"github.com/ejamesc/jarvisbot"
+	"github.com/kardianos/osext"
 	"github.com/tucnak/telebot"
 )
 
 func main() {
-	bot, err := telebot.NewBot(API_KEY)
+	// Grab current executing directory
+	// In most cases it's the folder in which the Go binary is located.
+	pwd, err := osext.ExecutableFolder()
+	if err != nil {
+		log.Fatalf("Error getting executable folder: %s", err)
+	}
+	configJSON, err := ioutil.ReadFile(path.Join(pwd, "config.json"))
+	if err != nil {
+		log.Fatalf("Error reading config file! Boo: %s", err)
+	}
+
+	var config map[string]string
+	json.Unmarshal(configJSON, &config)
+
+	telegramAPIKey := config["telegram_api_key"]
+	if telegramAPIKey == "" {
+		log.Fatalf("config.json exists but doesn't contain a Telegram API Key! Read https://core.telegram.org/bots#3-how-do-i-create-a-bot on how to get one!")
+	}
+
+	bot, err := telebot.NewBot(telegramAPIKey)
 	if err != nil {
 		log.Fatalf("Error creating new bot, dude %s", err)
 	}
 
 	logger := log.New(os.Stdout, "[jarvis] ", 0)
-	// TODO: Shift settings out to JSON
 	jb := jarvisbot.InitJarvis("JarvisChenBot", bot, logger, nil)
 	defer jb.CloseDB()
 
