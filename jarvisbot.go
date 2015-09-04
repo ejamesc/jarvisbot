@@ -5,12 +5,14 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"path"
 	"runtime"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/boltdb/bolt"
+	"github.com/kardianos/osext"
 	"github.com/tucnak/telebot"
 )
 
@@ -42,21 +44,27 @@ type ResponseFunc func(m *message)
 // Initialise a JarvisBot.
 // lg and fmap are optional. If no FuncMap is provided, JarvisBot will
 // be initialised with a default FuncMap
-func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, fmap FuncMap) *JarvisBot {
+func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, fmap FuncMap, config map[string]string) *JarvisBot {
 	// We'll use random numbers throughout JarvisBot
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	if lg == nil {
 		lg = log.New(os.Stdout, "[jarvis] ", 0)
 	}
-	j := &JarvisBot{Name: name, bot: bot, log: lg, fmap: fmap, keys: map[string]string{}}
+	j := &JarvisBot{Name: name, bot: bot, log: lg, fmap: fmap, keys: config}
 
 	if fmap == nil {
 		j.fmap = j.GetDefaultFuncMap()
 	}
 
 	// Setup database
-	db, err := bolt.Open("jarvis.db", 0600, nil)
+	// Get current executing folder
+	ext, err := osext.ExecutableFolder()
+	if err != nil {
+		lg.Fatalf("cannot retrieve present working directory: %s", err)
+	}
+
+	db, err := bolt.Open(path.Join(ext, "jarvis.db"), 0600, nil)
 	if err != nil {
 		lg.Fatal(err)
 	}

@@ -119,11 +119,11 @@ type Rates struct {
 
 // Retrieves exchange rates from the OpenExchangeAPI
 func (j *JarvisBot) RetrieveExchangeRates() (*Rates, error) {
-	if j.keys["open_exchange"] != "" {
+	if j.keys["open_exchange_api_key"] == "" {
 		err := fmt.Errorf("no open exchange api key!")
 		return nil, err
 	}
-	resp, err := http.Get(ENDPOINT + j.keys["open_exchange"])
+	resp, err := http.Get(ENDPOINT + j.keys["open_exchange_api_key"])
 	if err != nil {
 		return nil, err
 	}

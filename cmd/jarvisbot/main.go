@@ -39,7 +39,7 @@ func main() {
 	}
 
 	logger := log.New(os.Stdout, "[jarvis] ", 0)
-	jb := jarvisbot.InitJarvis("JarvisChenBot", bot, logger, nil)
+	jb := jarvisbot.InitJarvis("JarvisChenBot", bot, logger, nil, config)
 	defer jb.CloseDB()
 
 	jb.GoSafely(func() {
