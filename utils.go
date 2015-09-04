@@ -59,6 +59,7 @@ func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 		}
 	}
 
+	// We generate a random uuid to prevent race conditions
 	imgFilePath := filepath.Join(tmpDirPath, uuid.NewV4().String()+ext)
 	file, err := os.Create(imgFilePath)
 	if err != nil {

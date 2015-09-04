@@ -70,13 +70,15 @@ func (j *JarvisBot) GetDefaultFuncMap() FuncMap {
 	return FuncMap{
 		"/hello":  j.SayHello,
 		"/echo":   j.Echo,
-		"/x":      j.Exchange,
 		"/xchg":   j.Exchange,
+		"/x":      j.Exchange,
 		"/clear":  j.Clear,
 		"/c":      j.Clear,
 		"/img":    j.ImageSearch,
 		"/psi":    j.PSI,
 		"/source": j.Source,
+		"/google": j.GoogleSearch,
+		"/g":      j.GoogleSearch,
 	}
 }
 

@@ -19,7 +19,7 @@ const ENDPOINT = "https://openexchangerates.org/api/latest.json?app_id="
 func (j *JarvisBot) Exchange(msg *message) {
 	if len(msg.Args) == 0 {
 		so := &telebot.SendOptions{ReplyTo: *msg.Message, ReplyMarkup: telebot.ReplyMarkup{ForceReply: true, Selective: true}}
-		j.bot.SendMessage(msg.Chat, "/xchg: Currency Conversion\nHere are some commands to try: \n* 10 sgd in usd\n* 100 vnd to sgd\n* 21 usd how much arr?\n\n\U0001F4A1 You could also use this format for faster results:\n/xchg 10 sgd in usd", so)
+		j.bot.SendMessage(msg.Chat, "/xchg: Currency Conversion\nHere are some commands to try: \n* 10 sgd in usd\n* 100 vnd to sgd\n* 21 usd how much arr?\n\n\U0001F4A1 You could also use this format for faster results:\n/x 10 sgd in usd", so)
 		return
 	}
 
