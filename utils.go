@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/kardianos/osext"
+	"github.com/satori/go.uuid"
 	"github.com/tucnak/telebot"
 )
 
@@ -58,7 +59,7 @@ func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 		}
 	}
 
-	imgFilePath := filepath.Join(tmpDirPath, imgName)
+	imgFilePath := filepath.Join(tmpDirPath, uuid.NewV4().String()+ext)
 	file, err := os.Create(imgFilePath)
 	if err != nil {
 		j.log.Printf("error creating image file")
