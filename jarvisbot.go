@@ -87,7 +87,6 @@ func (j *JarvisBot) GetDefaultFuncMap() FuncMap {
 		"/psi":    j.PSI,
 		"/source": j.Source,
 		"/google": j.GoogleSearch,
-		"/g":      j.GoogleSearch,
 		"/gif":    j.GifSearch,
 	}
 }
