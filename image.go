@@ -53,22 +53,19 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 		return
 	}
 
-	if len(searchRes.ResponseData.Results) == 0 {
-		j.log.Printf("results empty for query '%s'", q)
-		return
-	}
+	if len(searchRes.ResponseData.Results) > 0 {
+		// Randomly select an image
+		n := rand.Intn(len(searchRes.ResponseData.Results))
+		r := searchRes.ResponseData.Results[n]
+		u, err := r.imgUrl()
+		fmt.Println(u.String())
+		if err != nil {
+			j.log.Printf("error generating url based on search result %v: %s", r, err)
+			return
+		}
 
-	// Randomly select an image
-	n := rand.Intn(len(searchRes.ResponseData.Results))
-	r := searchRes.ResponseData.Results[n]
-	u, err := r.imgUrl()
-	fmt.Println(u.String())
-	if err != nil {
-		j.log.Printf("error generating url based on search result %v: %s", r, err)
-		return
+		j.sendPhotoFromURL(u, msg)
 	}
-
-	j.sendPhotoFromURL(u, msg)
 }
 
 type imgResult struct {

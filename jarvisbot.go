@@ -23,6 +23,7 @@ type JarvisBot struct {
 	log  *log.Logger
 	fmap FuncMap
 	db   *bolt.DB
+	keys map[string]string
 }
 
 // Wrapper struct for a message
@@ -48,7 +49,7 @@ func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, fmap FuncMap) *Ja
 	if lg == nil {
 		lg = log.New(os.Stdout, "[jarvis] ", 0)
 	}
-	j := &JarvisBot{Name: name, bot: bot, log: lg, fmap: fmap}
+	j := &JarvisBot{Name: name, bot: bot, log: lg, fmap: fmap, keys: map[string]string{}}
 
 	if fmap == nil {
 		j.fmap = j.GetDefaultFuncMap()
@@ -79,6 +80,7 @@ func (j *JarvisBot) GetDefaultFuncMap() FuncMap {
 		"/source": j.Source,
 		"/google": j.GoogleSearch,
 		"/g":      j.GoogleSearch,
+		"/gif":    j.GifSearch,
 	}
 }
 
