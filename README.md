@@ -10,10 +10,10 @@ A Telegram bot, built over 4 days, for friends. Current featureset includes:
 * Clears your NSFW stuff
 
 ## Instructions 
-Compile Jarvis and upload the binary to your server. In the same directory as
-the binary, include a `temp` directory, and a config.json file. (A
+Compile Jarvis for your target platform and upload the binary to your server. 
+
+In the same directory as the binary, include a `temp` directory, and a config.json file. (A
 config-sample.json has been provided for you.) Remember to include the API keys
 in your config.json! 
 
-Last, but not least, make sure the user running the program has
-write permissions to its directory, as Jarvis creates a jarvis.db file.
+Last, but not least, make sure the user running the program has write permissions to its directory, as Jarvis creates a jarvis.db file.
