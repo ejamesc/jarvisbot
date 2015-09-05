@@ -29,7 +29,11 @@ func (j *JarvisBot) Exchange(msg *message) {
 		return
 	}
 
-	fromCurrRate, toCurrRate := j.getRatesFromDB(fromCurr, toCurr)
+	fromCurrRate, toCurrRate, err := j.getRatesFromDB(fromCurr, toCurr)
+	if err != nil {
+		j.log.Printf("[%s] problem with retrieving rates: %s", time.Now().Format(time.RFC3339), err)
+		return
+	}
 
 	res := amount * 1 / fromCurrRate * toCurrRate
 	displayRate := 1 / fromCurrRate * toCurrRate
@@ -41,14 +45,17 @@ func (j *JarvisBot) Exchange(msg *message) {
 }
 
 // Retrieve rates from DB.
-func (j *JarvisBot) getRatesFromDB(fromCurr, toCurr string) (float64, float64) {
+func (j *JarvisBot) getRatesFromDB(fromCurr, toCurr string) (float64, float64, error) {
 	if j.ratesAreEmpty() {
 		j.log.Println("retrieving rates due to an empty database")
-		j.RetrieveAndSaveExchangeRates()
+		err := j.RetrieveAndSaveExchangeRates()
+		if err != nil {
+			return 0.0, 0.0, err
+		}
 	}
 
 	var fromCurrRate, toCurrRate float64
-	j.db.View(func(tx *bolt.Tx) error {
+	err := j.db.View(func(tx *bolt.Tx) error {
 		var err error
 		b := tx.Bucket(exchange_rate_bucket_name)
 		v := b.Get([]byte(fromCurr))
@@ -65,14 +72,14 @@ func (j *JarvisBot) getRatesFromDB(fromCurr, toCurr string) (float64, float64) {
 		return nil
 	})
 
-	return fromCurrRate, toCurrRate
+	return fromCurrRate, toCurrRate, err
 }
 
 // RetrieveAndSaveExchangeRates retrieves exchange rates and saves it to DB
-func (j *JarvisBot) RetrieveAndSaveExchangeRates() {
+func (j *JarvisBot) RetrieveAndSaveExchangeRates() error {
 	rates, err := j.RetrieveExchangeRates()
 	if err != nil {
-		j.log.Printf("[%s] error retrieving rates: %s", time.Now().Format(time.RFC3339), err)
+		return err
 	}
 
 	err = j.db.Batch(func(tx *bolt.Tx) error {
@@ -92,8 +99,9 @@ func (j *JarvisBot) RetrieveAndSaveExchangeRates() {
 	})
 
 	if err != nil {
-		j.log.Printf("error saving exchange rates: %s", err)
+		return err
 	}
+	return nil
 }
 
 // Checks to see if the rates database
