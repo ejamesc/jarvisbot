@@ -11,7 +11,7 @@ A Telegram bot, built over 4 days, for friends. Current featureset includes:
 
 ## Build dependencies
 Jarvis relies on go-bindata to package assets in the data/ folder into the
-binary. If you'd like to add to the assets when implementing your own function, 
+binary. If you'd like to add to the assets when implementing your own response functions, 
 install the go-bindata tool using:
 
 ```go get -u github.com/jteeuwen/go-bindata/... ```
@@ -25,8 +25,8 @@ the same results).
 ## Instructions 
 Compile Jarvis for your target platform and upload the binary to your server. 
 
-In the same directory as the binary, include a `temp` directory, and a config.json file. (A
-config-sample.json has been provided for you.) Remember to include the API keys
+In the same directory as the binary, create a config.json file. (A
+config-sample.json has been provided for you to modify.) Remember to include the API keys
 in your config.json! 
 
 Last, but not least, make sure the user running the program has write permissions to its directory, 
