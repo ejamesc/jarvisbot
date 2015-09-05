@@ -11,12 +11,14 @@ A Telegram bot, built over 4 days, for friends. Current featureset includes:
 
 ## Build dependencies
 Jarvis relies on go-bindata to package assets in the data/ folder into the
-binary during compilation. Install the go-bindata tool using:
+binary. If you'd like to add to the assets when implementing your own function, 
+install the go-bindata tool using:
 
 ```go get -u github.com/jteeuwen/go-bindata/... ```
 
 If you're running a Go version < 1.4, you'll need to manually run the following
-command in the top level dir. (Otherwise, it'll be run as part of the compile step for you).
+command in the top level dir. (Otherwise, you can run `go generate` to achieve
+the same results).
 
 ```go-bindata -pkg jarvisbot -o assets.go data/```
 
