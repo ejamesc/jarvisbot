@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"path"
+	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -85,6 +86,7 @@ func (j *JarvisBot) getDefaultFuncMap() FuncMap {
 		"/psi":    j.PSI,
 		"/source": j.Source,
 		"/google": j.GoogleSearch,
+		"/g":      j.GoogleSearch,
 		"/gif":    j.GifSearch,
 	}
 }
@@ -173,8 +175,12 @@ func (j *JarvisBot) parseMessage(msg *telebot.Message) *message {
 	args := []string{}
 
 	if msg.IsReply() {
+		// We use a hack. All reply-to messages have the command it's replying to as the
+		// part of the message.
+		r := regexp.MustCompile(`\/\w*`)
+		res := r.FindString(msg.ReplyTo.Text)
 		for k, _ := range j.fmap {
-			if strings.Contains(msg.ReplyTo.Text, k) {
+			if res == k {
 				cmd = k
 				args = strings.Split(msg.Text, " ")
 				break
