@@ -16,4 +16,5 @@ In the same directory as the binary, include a `temp` directory, and a config.js
 config-sample.json has been provided for you.) Remember to include the API keys
 in your config.json! 
 
-Last, but not least, make sure the user running the program has write permissions to its directory, as Jarvis creates a jarvis.db file.
+Last, but not least, make sure the user running the program has write permissions to its directory, 
+as Jarvis creates a jarvis.db file.
