@@ -115,7 +115,7 @@ func (j *JarvisBot) Retrieve(msg *message) {
 
 // Add a response function to the FuncMap
 func (j *JarvisBot) AddFunction(command string, resp ResponseFunc) error {
-	if !strings.Contains("/", command) {
+	if !strings.Contains(command, "/") {
 		return fmt.Errorf("not a valid command string - it should be of the format /something")
 	}
 	j.fmap[command] = resp

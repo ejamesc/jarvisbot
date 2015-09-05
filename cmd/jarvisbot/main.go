@@ -39,13 +39,16 @@ func main() {
 
 	bot, err := telebot.NewBot(telegramAPIKey)
 	if err != nil {
-		log.Fatalf("Error creating new bot, dude %s", err)
+		log.Fatalf("error creating new bot, dude %s", err)
 	}
 
 	logger := log.New(os.Stdout, "[jarvis] ", 0)
 
 	jb := jarvisbot.InitJarvis(botName, bot, logger, config)
 	defer jb.CloseDB()
+
+	jb.AddFunction("/laugh", jb.SendLaugh)
+	jb.AddFunction("/neverforget", jb.NeverForget)
 
 	jb.GoSafely(func() {
 		logger.Println("Scheduling exchange rate update")
