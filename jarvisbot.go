@@ -44,18 +44,16 @@ type ResponseFunc func(m *message)
 // Initialise a JarvisBot.
 // lg and fmap are optional. If no FuncMap is provided, JarvisBot will
 // be initialised with a default FuncMap
-func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, fmap FuncMap, config map[string]string) *JarvisBot {
+func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, config map[string]string) *JarvisBot {
 	// We'll use random numbers throughout JarvisBot
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	if lg == nil {
 		lg = log.New(os.Stdout, "[jarvis] ", 0)
 	}
-	j := &JarvisBot{Name: name, bot: bot, log: lg, fmap: fmap, keys: config}
+	j := &JarvisBot{Name: name, bot: bot, log: lg, keys: config}
 
-	if fmap == nil {
-		j.fmap = j.GetDefaultFuncMap()
-	}
+	j.fmap = j.getDefaultFuncMap()
 
 	// Setup database
 	// Get current executing folder
@@ -75,7 +73,7 @@ func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, fmap FuncMap, con
 }
 
 // Get the built-in, default FuncMap.
-func (j *JarvisBot) GetDefaultFuncMap() FuncMap {
+func (j *JarvisBot) getDefaultFuncMap() FuncMap {
 	return FuncMap{
 		"/hello":  j.SayHello,
 		"/echo":   j.Echo,
@@ -115,9 +113,13 @@ func (j *JarvisBot) Retrieve(msg *message) {
 	}
 }
 
-// Set a custom FuncMap.
-func (j *JarvisBot) SetFuncMap(fmap FuncMap) {
-	j.fmap = fmap
+// Add a response function to the FuncMap
+func (j *JarvisBot) AddFunction(command string, resp ResponseFunc) error {
+	if !strings.Contains("/", command) {
+		return fmt.Errorf("not a valid command string - it should be of the format /something")
+	}
+	j.fmap[command] = resp
+	return nil
 }
 
 // Route received Telegram messages to the appropriate response functions.

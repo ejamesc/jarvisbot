@@ -18,19 +18,23 @@ func main() {
 	// In most cases it's the folder in which the Go binary is located.
 	pwd, err := osext.ExecutableFolder()
 	if err != nil {
-		log.Fatalf("Error getting executable folder: %s", err)
+		log.Fatalf("error getting executable folder: %s", err)
 	}
 	configJSON, err := ioutil.ReadFile(path.Join(pwd, "config.json"))
 	if err != nil {
-		log.Fatalf("Error reading config file! Boo: %s", err)
+		log.Fatalf("error reading config file! Boo: %s", err)
 	}
 
 	var config map[string]string
 	json.Unmarshal(configJSON, &config)
 
-	telegramAPIKey := config["telegram_api_key"]
-	if telegramAPIKey == "" {
+	telegramAPIKey, ok := config["telegram_api_key"]
+	if !ok {
 		log.Fatalf("config.json exists but doesn't contain a Telegram API Key! Read https://core.telegram.org/bots#3-how-do-i-create-a-bot on how to get one!")
+	}
+	botName, ok := config["name"]
+	if !ok {
+		log.Fatalf("config.json exists but doesn't contain a bot name. Set your botname when registering with The Botfather.")
 	}
 
 	bot, err := telebot.NewBot(telegramAPIKey)
@@ -39,7 +43,8 @@ func main() {
 	}
 
 	logger := log.New(os.Stdout, "[jarvis] ", 0)
-	jb := jarvisbot.InitJarvis("JarvisChenBot", bot, logger, nil, config)
+
+	jb := jarvisbot.InitJarvis(botName, bot, logger, config)
 	defer jb.CloseDB()
 
 	jb.GoSafely(func() {
