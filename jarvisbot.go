@@ -1,11 +1,14 @@
 package jarvisbot
 
+//go:generate go-bindata -pkg $GOPACKAGE -o assets.go data/
+
 import (
 	"fmt"
 	"log"
 	"math/rand"
 	"os"
 	"path"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"strconv"
@@ -58,17 +61,27 @@ func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, config map[string
 
 	// Setup database
 	// Get current executing folder
-	ext, err := osext.ExecutableFolder()
+	pwd, err := osext.ExecutableFolder()
 	if err != nil {
 		lg.Fatalf("cannot retrieve present working directory: %s", err)
 	}
 
-	db, err := bolt.Open(path.Join(ext, "jarvis.db"), 0600, nil)
+	db, err := bolt.Open(path.Join(pwd, "jarvis.db"), 0600, nil)
 	if err != nil {
 		lg.Fatal(err)
 	}
 	j.db = db
 	createAllBuckets(db)
+
+	// Ensure temp directory is created
+	tmpDirPath := filepath.Join(pwd, TEMPDIR)
+	if _, err := os.Stat(tmpDirPath); os.IsNotExist(err) {
+		j.log.Printf("[%s] creating temporary directory", time.Now().Format(time.RFC3339))
+		mkErr := os.Mkdir(tmpDirPath, 0775)
+		if mkErr != nil {
+			j.log.Printf("[%s] error creating temporary directory\n%s", time.Now().Format(time.RFC3339), err)
+		}
+	}
 
 	return j
 }

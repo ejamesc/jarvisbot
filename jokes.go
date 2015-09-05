@@ -1,7 +1,6 @@
 package jarvisbot
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -46,7 +45,6 @@ func (j *JarvisBot) sendFileWrapper(laughFile []byte, filename string, filetype 
 	}
 
 	filePath := path.Join(pwd, TEMPDIR, filename)
-	fmt.Println(filePath)
 	// Check if filepath exists, if it doesn't exist, create it
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		err = ioutil.WriteFile(filePath, laughFile, 0775)

@@ -9,6 +9,17 @@ A Telegram bot, built over 4 days, for friends. Current featureset includes:
 * Displays the current air pollution index for all areas in Singapore
 * Clears your NSFW stuff
 
+## Build dependencies
+Jarvis relies on go-bindata to package assets in the data/ folder into the
+binary during compilation. Install the go-bindata tool using:
+
+```go get -u github.com/jteeuwen/go-bindata/... ```
+
+If you're running a Go version < 1.4, you'll need to manually run the following
+command in the top level dir. (Otherwise, it'll be run as part of the compile step for you).
+
+```go-bindata -pkg jarvisbot -o assets.go data/```
+
 ## Instructions 
 Compile Jarvis for your target platform and upload the binary to your server. 
 
