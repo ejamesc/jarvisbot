@@ -1,6 +1,7 @@
 package jarvisbot
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -14,42 +15,47 @@ import (
 // SendLaugh returns Jon's laugh. Thx, @jhowtan
 func (j *JarvisBot) SendLaugh(msg *message) {
 	j.bot.SendChatAction(msg.Chat, telebot.UploadingAudio)
-	laughData, err := Asset("data/laugh.ogg")
+
+	fn, err := j.sendFileWrapper("data/laugh.ogg", "ogg")
 	if err != nil {
-		j.log.Printf("error retrieving laughtrack: %s", err)
+		j.log.Printf("error sending file: %s", err)
 		return
 	}
-
-	fn := j.sendFileWrapper(laughData, "laugh.ogg", "ogg")
 	fn(msg)
 }
 
 // NeverForget returns the Barisan Socialis flag. Thx, @shawntan
 func (j *JarvisBot) NeverForget(msg *message) {
 	j.bot.SendChatAction(msg.Chat, telebot.UploadingPhoto)
-	barisanData, err := Asset("data/barisan.jpg")
+
+	fn, err := j.sendFileWrapper("data/barisan.jpg", "photo")
 	if err != nil {
-		j.log.Printf("error retrieving barisan logo: %s", err)
+		j.log.Printf("error sending file: %s", err)
 		return
 	}
-
-	fn := j.sendFileWrapper(barisanData, "barisan.jpg", "photo")
 	fn(msg)
 }
 
 // sendFileWrapper writes the laugh file before returning the response function
-func (j *JarvisBot) sendFileWrapper(laughFile []byte, filename string, filetype string) ResponseFunc {
+func (j *JarvisBot) sendFileWrapper(assetName string, filetype string) (ResponseFunc, error) {
 	pwd, err := osext.ExecutableFolder()
 	if err != nil {
-		j.log.Printf("error writing laughFile: %s", err)
+		j.log.Printf("error retrieving pwd: %s", err)
 	}
 
+	_, filename := path.Split(assetName)
 	filePath := path.Join(pwd, TEMPDIR, filename)
-	// Check if filepath exists, if it doesn't exist, create it
+	// Check if file exists, if it doesn't exist, create it
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		err = ioutil.WriteFile(filePath, laughFile, 0775)
+		fileData, err := Asset(assetName)
 		if err != nil {
-			j.log.Printf("error creating %s: %s", filename, err)
+			err = fmt.Errorf("error retrieving asset %s: %s", assetName, err)
+			return nil, err
+		}
+		err = ioutil.WriteFile(filePath, fileData, 0775)
+		if err != nil {
+			err = fmt.Errorf("error creating %s: %s", assetName, err)
+			return nil, err
 		}
 	}
 
@@ -65,5 +71,5 @@ func (j *JarvisBot) sendFileWrapper(laughFile []byte, filename string, filetype 
 		} else if filetype == "photo" {
 			j.bot.SendPhoto(msg.Chat, &telebot.Photo{Thumbnail: telebot.Thumbnail{File: file}}, nil)
 		}
-	}
+	}, nil
 }
