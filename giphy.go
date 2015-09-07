@@ -25,7 +25,7 @@ func (j *JarvisBot) GifSearch(msg *message) {
 	}
 
 	j.bot.SendChatAction(msg.Chat, telebot.UploadingPhoto)
-	// Change this to listen on channel for status
+	// TODO: Change this to listen on channel for status
 	go func() {
 		time.Sleep(6 * time.Second)
 		j.bot.SendChatAction(msg.Chat, telebot.UploadingPhoto)

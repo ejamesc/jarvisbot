@@ -36,7 +36,7 @@ func (j *JarvisBot) NeverForget(msg *message) {
 	fn(msg)
 }
 
-// sendFileWrapper writes the laugh file before returning the response function
+// sendFileWrapper checks if the file exists and writes it before returning the response function.
 func (j *JarvisBot) sendFileWrapper(assetName string, filetype string) (ResponseFunc, error) {
 	pwd, err := osext.ExecutableFolder()
 	if err != nil {

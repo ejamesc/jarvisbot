@@ -15,7 +15,7 @@ import (
 
 const ENDPOINT = "https://openexchangerates.org/api/latest.json?app_id="
 
-// Exchange is used to perform an exchange rate conversion
+// Exchange is used to perform an exchange rate conversion.
 func (j *JarvisBot) Exchange(msg *message) {
 	if len(msg.Args) == 0 {
 		so := &telebot.SendOptions{ReplyTo: *msg.Message, ReplyMarkup: telebot.ReplyMarkup{ForceReply: true, Selective: true}}
@@ -75,7 +75,7 @@ func (j *JarvisBot) getRatesFromDB(fromCurr, toCurr string) (float64, float64, e
 	return fromCurrRate, toCurrRate, err
 }
 
-// RetrieveAndSaveExchangeRates retrieves exchange rates and saves it to DB
+// RetrieveAndSaveExchangeRates retrieves exchange rates and saves it to DB.
 func (j *JarvisBot) RetrieveAndSaveExchangeRates() error {
 	rates, err := j.RetrieveExchangeRates()
 	if err != nil {
@@ -104,7 +104,7 @@ func (j *JarvisBot) RetrieveAndSaveExchangeRates() error {
 	return nil
 }
 
-// Checks to see if the rates database
+// Checks to see if the rates database is empty.
 func (j *JarvisBot) ratesAreEmpty() bool {
 	res := true
 	j.db.View(func(tx *bolt.Tx) error {
@@ -125,7 +125,7 @@ type Rates struct {
 	Rates         map[string]float64 `json:"rates"`
 }
 
-// Retrieves exchange rates from the OpenExchangeAPI
+// Retrieves exchange rates from the OpenExchangeAPI.
 func (j *JarvisBot) RetrieveExchangeRates() (*Rates, error) {
 	if j.keys["open_exchange_api_key"] == "" {
 		err := fmt.Errorf("no open exchange api key!")

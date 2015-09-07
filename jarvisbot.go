@@ -11,7 +11,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"strconv"
 	"strings"
 	"time"
 
@@ -46,8 +45,7 @@ type FuncMap map[string]ResponseFunc
 type ResponseFunc func(m *message)
 
 // Initialise a JarvisBot.
-// lg and fmap are optional. If no FuncMap is provided, JarvisBot will
-// be initialised with a default FuncMap
+// lg is optional.
 func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, config map[string]string) *JarvisBot {
 	// We'll use random numbers throughout JarvisBot
 	rand.Seed(time.Now().UTC().UnixNano())
@@ -73,7 +71,8 @@ func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, config map[string
 	j.db = db
 	createAllBuckets(db)
 
-	// Ensure temp directory is created
+	// Ensure temp directory is created.
+	// This is used to store media temporarily.
 	tmpDirPath := filepath.Join(pwd, TEMPDIR)
 	if _, err := os.Stat(tmpDirPath); os.IsNotExist(err) {
 		j.log.Printf("[%s] creating temporary directory", time.Now().Format(time.RFC3339))
@@ -101,30 +100,6 @@ func (j *JarvisBot) getDefaultFuncMap() FuncMap {
 		"/google": j.GoogleSearch,
 		"/g":      j.GoogleSearch,
 		"/gif":    j.GifSearch,
-	}
-}
-
-// Test function to explore db.
-func (j *JarvisBot) Retrieve(msg *message) {
-	if j.ratesAreEmpty() {
-		j.RetrieveAndSaveExchangeRates()
-	}
-
-	err := j.db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket(exchange_rate_bucket_name)
-		b.ForEach(func(k, v []byte) error {
-			f, err := strconv.ParseFloat(string(v), 64)
-			if err != nil {
-				return err
-			}
-			fmt.Printf("key=%s, value=%s\n", string(k), f)
-			return nil
-		})
-		return nil
-	})
-
-	if err != nil {
-		j.log.Println(err)
 	}
 }
 

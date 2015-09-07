@@ -1,15 +1,18 @@
 package jarvisbot
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/boltdb/bolt"
 	"github.com/kardianos/osext"
 	"github.com/satori/go.uuid"
 	"github.com/tucnak/telebot"
@@ -39,7 +42,7 @@ func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 	}
 	defer resp.Body.Close()
 
-	// Grab current executing directory
+	// Grab current executing directory.
 	// In most cases it's the folder in which the Go binary is located.
 	pwd, err := osext.ExecutableFolder()
 	if err != nil {
@@ -71,8 +74,7 @@ func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 		os.Remove(imgFilePath)
 	}()
 
-	// Use io.Copy to just dump the response body to the file.
-	// This supports huge files.
+	// io.Copy supports copying large files.
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
 		j.log.Printf("error writing request body to file: %s", err)
@@ -92,5 +94,29 @@ func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 	} else {
 		photo := &telebot.Photo{Thumbnail: telebot.Thumbnail{File: tFile}}
 		j.bot.SendPhoto(msg.Chat, photo, nil)
+	}
+}
+
+// Test function to explore db.
+func (j *JarvisBot) Retrieve(msg *message) {
+	if j.ratesAreEmpty() {
+		j.RetrieveAndSaveExchangeRates()
+	}
+
+	err := j.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket(exchange_rate_bucket_name)
+		b.ForEach(func(k, v []byte) error {
+			f, err := strconv.ParseFloat(string(v), 64)
+			if err != nil {
+				return err
+			}
+			fmt.Printf("key=%s, value=%s\n", string(k), f)
+			return nil
+		})
+		return nil
+	})
+
+	if err != nil {
+		j.log.Println(err)
 	}
 }
