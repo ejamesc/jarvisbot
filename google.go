@@ -63,9 +63,9 @@ func (j *JarvisBot) GoogleSearch(msg *message) {
 				continue
 			}
 		}
+		j.bot.SendMessage(msg.Chat, resMsg, nil)
 	}
 
-	j.bot.SendMessage(msg.Chat, resMsg, nil)
 }
 
 type searchResult struct {

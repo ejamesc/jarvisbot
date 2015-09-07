@@ -88,18 +88,20 @@ func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, config map[string
 // Get the built-in, default FuncMap.
 func (j *JarvisBot) getDefaultFuncMap() FuncMap {
 	return FuncMap{
-		"/hello":  j.SayHello,
-		"/echo":   j.Echo,
-		"/xchg":   j.Exchange,
-		"/x":      j.Exchange,
-		"/clear":  j.Clear,
-		"/c":      j.Clear,
-		"/img":    j.ImageSearch,
-		"/psi":    j.PSI,
-		"/source": j.Source,
-		"/google": j.GoogleSearch,
-		"/g":      j.GoogleSearch,
-		"/gif":    j.GifSearch,
+		"/hello":   j.SayHello,
+		"/echo":    j.Echo,
+		"/xchg":    j.Exchange,
+		"/x":       j.Exchange,
+		"/clear":   j.Clear,
+		"/c":       j.Clear,
+		"/img":     j.ImageSearch,
+		"/psi":     j.PSI,
+		"/source":  j.Source,
+		"/google":  j.GoogleSearch,
+		"/g":       j.GoogleSearch,
+		"/gif":     j.GifSearch,
+		"/youtube": j.YoutubeSearch,
+		"/yt":      j.YoutubeSearch,
 	}
 }
 
