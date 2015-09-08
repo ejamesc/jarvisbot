@@ -55,7 +55,7 @@ func (j *JarvisBot) PSI(msg *message) {
 		direction := ""
 		for _, v := range msg.Args {
 			d := strings.TrimSpace(strings.ToLower(v))
-			if d == "north" || d == "south" || d == "west" || d == "east" || d == "central" {
+			if d == "north" || d == "south" || d == "west" || d == "east" || d == "central" || d == "n" || d == "s" || d == "w" || d == "e" || d == "c" {
 				direction = d
 			}
 		}
@@ -63,17 +63,18 @@ func (j *JarvisBot) PSI(msg *message) {
 		formatText := "\U0001F4AD PSI Readings (%s):\n* PSI (24hr): %s\n\n* PM2.5 (24hr): %s\n* PM10 (24hr): %s\n\n* SO2 (24hr): %s\n* NO2 (1hr): %s\n* O3 (8hr): %s\n* CO (8hr): %s\n\n\U0001F550 %s"
 		msgText := ""
 		switch direction {
-		case "north":
-			msgText = fmt.Sprintf(formatText, direction, strconv.Itoa(psi.North.PSI_24h), strconv.Itoa(psi.North.PM2_5_24h), strconv.Itoa(psi.North.PM10_24h), strconv.Itoa(psi.North.SO2_24), strconv.Itoa(psi.North.No2_1h), strconv.Itoa(psi.North.O3_8h), strconv.FormatFloat(psi.North.Co_8h, 'f', 2, 64), psi.LastGenerated)
-		case "south":
-			msgText = fmt.Sprintf(formatText, direction, strconv.Itoa(psi.South.PSI_24h), strconv.Itoa(psi.South.PM2_5_24h), strconv.Itoa(psi.South.PM10_24h), strconv.Itoa(psi.South.SO2_24), strconv.Itoa(psi.South.No2_1h), strconv.Itoa(psi.South.O3_8h), strconv.FormatFloat(psi.South.Co_8h, 'f', 2, 64), psi.LastGenerated)
-		case "west":
-			msgText = fmt.Sprintf(formatText, direction, strconv.Itoa(psi.West.PSI_24h), strconv.Itoa(psi.West.PM2_5_24h), strconv.Itoa(psi.West.PM10_24h), strconv.Itoa(psi.West.SO2_24), strconv.Itoa(psi.West.No2_1h), strconv.Itoa(psi.West.O3_8h), strconv.FormatFloat(psi.West.Co_8h, 'f', 2, 64), psi.LastGenerated)
-		case "east":
-			msgText = fmt.Sprintf(formatText, direction, strconv.Itoa(psi.East.PSI_24h), strconv.Itoa(psi.East.PM2_5_24h), strconv.Itoa(psi.East.PM10_24h), strconv.Itoa(psi.East.SO2_24), strconv.Itoa(psi.East.No2_1h), strconv.Itoa(psi.East.O3_8h), strconv.FormatFloat(psi.East.Co_8h, 'f', 2, 64), psi.LastGenerated)
-		case "central":
-			msgText = fmt.Sprintf(formatText, direction, strconv.Itoa(psi.Central.PSI_24h), strconv.Itoa(psi.Central.PM2_5_24h), strconv.Itoa(psi.Central.PM10_24h), strconv.Itoa(psi.Central.SO2_24), strconv.Itoa(psi.Central.No2_1h), strconv.Itoa(psi.Central.O3_8h), strconv.FormatFloat(psi.Central.Co_8h, 'f', 2, 64), psi.LastGenerated)
-
+		case "north", "n":
+			msgText = fmt.Sprintf(formatText, "North", strconv.Itoa(psi.North.PSI_24h), strconv.Itoa(psi.North.PM2_5_24h), strconv.Itoa(psi.North.PM10_24h), strconv.Itoa(psi.North.SO2_24), strconv.Itoa(psi.North.No2_1h), strconv.Itoa(psi.North.O3_8h), strconv.FormatFloat(psi.North.Co_8h, 'f', 2, 64), psi.LastGenerated)
+		case "south", "s":
+			msgText = fmt.Sprintf(formatText, "South", strconv.Itoa(psi.South.PSI_24h), strconv.Itoa(psi.South.PM2_5_24h), strconv.Itoa(psi.South.PM10_24h), strconv.Itoa(psi.South.SO2_24), strconv.Itoa(psi.South.No2_1h), strconv.Itoa(psi.South.O3_8h), strconv.FormatFloat(psi.South.Co_8h, 'f', 2, 64), psi.LastGenerated)
+		case "west", "w":
+			msgText = fmt.Sprintf(formatText, "West", strconv.Itoa(psi.West.PSI_24h), strconv.Itoa(psi.West.PM2_5_24h), strconv.Itoa(psi.West.PM10_24h), strconv.Itoa(psi.West.SO2_24), strconv.Itoa(psi.West.No2_1h), strconv.Itoa(psi.West.O3_8h), strconv.FormatFloat(psi.West.Co_8h, 'f', 2, 64), psi.LastGenerated)
+		case "east", "e":
+			msgText = fmt.Sprintf(formatText, "East", strconv.Itoa(psi.East.PSI_24h), strconv.Itoa(psi.East.PM2_5_24h), strconv.Itoa(psi.East.PM10_24h), strconv.Itoa(psi.East.SO2_24), strconv.Itoa(psi.East.No2_1h), strconv.Itoa(psi.East.O3_8h), strconv.FormatFloat(psi.East.Co_8h, 'f', 2, 64), psi.LastGenerated)
+		case "central", "c":
+			msgText = fmt.Sprintf(formatText, "Central", strconv.Itoa(psi.Central.PSI_24h), strconv.Itoa(psi.Central.PM2_5_24h), strconv.Itoa(psi.Central.PM10_24h), strconv.Itoa(psi.Central.SO2_24), strconv.Itoa(psi.Central.No2_1h), strconv.Itoa(psi.Central.O3_8h), strconv.FormatFloat(psi.Central.Co_8h, 'f', 2, 64), psi.LastGenerated)
+		default:
+			msgText = "I didn't understand that. Try:\n* /psi east\n* /psi central\n* /psi c"
 		}
 		j.bot.SendMessage(msg.Chat, msgText, nil)
 	}

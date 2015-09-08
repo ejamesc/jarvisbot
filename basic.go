@@ -32,7 +32,7 @@ func (j *JarvisBot) Source(msg *message) {
 
 // Start returns some help text.
 func (j *JarvisBot) Start(msg *message) {
-	j.bot.SendMessage(msg.Chat, `Hi there! Jarvis can help you with the following things:
+	j.bot.SendMessage(msg.Chat, `Hi there! I can help you with the following things:
 
 /img - gets an image
 /gif - gets a gif
