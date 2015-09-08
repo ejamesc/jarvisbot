@@ -1,6 +1,16 @@
-# Jarvis Bot
+<h3 align="center">
+  <div align="center">
+    <h1>Jarvis</h1>
+    <h6>A Telegram bot for friends</h6>
+  </div>
+  <a href="https://github.com/ejamesc/jarvisbot">
+    <img src="http://i.imgur.com/yZBaf9T.png" alt="Jarvis" width="500" />
+  </a>
+</h3>
 
-A Telegram bot, built over 4 days, for friends. Current featureset includes: 
+------
+
+Current featureset includes: 
 
 * Grabs images
 * Grabs GIFs
@@ -31,3 +41,9 @@ in your config.json!
 
 Last, but not least, make sure the user running the program has write permissions to its directory, 
 as Jarvis creates a jarvis.db file.
+
+## Screenshots
+
+<img src="http://i.imgur.com/GldfYIX.png" alt="Jarvis" width="500" />
+<img src="http://i.imgur.com/uGmOQIC.png" alt="Jarvis" width="500" />
+<img src="http://i.imgur.com/EWMJEoF.png" alt="Jarvis" width="500" />
