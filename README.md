@@ -41,3 +41,9 @@ in your config.json!
 
 Last, but not least, make sure the user running the program has write permissions to its directory, 
 as Jarvis creates a jarvis.db file.
+
+## Screenshots
+
+<img src="http://i.imgur.com/GldfYIX.png" alt="Jarvis" width="500" />
+<img src="http://i.imgur.com/uGmOQIC.png" alt="Jarvis" width="500" />
+<img src="http://i.imgur.com/EWMJEoF.png" alt="Jarvis" width="500" />
