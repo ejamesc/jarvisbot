@@ -1,12 +1,16 @@
 <h3 align="center">
+  <div align="center">
+    <h1>Jarvis</h1>
+    <h6>A Telegram bot for friends</h6>
+  </div>
   <a href="https://github.com/ejamesc/jarvisbot">
     <img src="http://i.imgur.com/yZBaf9T.png" alt="Jarvis" width="500" />
   </a>
 </h3>
 
-# Jarvis Bot
+------
 
-A Telegram bot, built over 4 days, for friends. Current featureset includes: 
+Current featureset includes: 
 
 * Grabs images
 * Grabs GIFs
