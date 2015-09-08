@@ -1,3 +1,9 @@
+<h3 align="center">
+  <a href="https://github.com/ejamesc/jarvisbot">
+    <img src="http://i.imgur.com/yZBaf9T.png" alt="Jarvis" width="500" />
+  </a>
+</h3>
+
 # Jarvis Bot
 
 A Telegram bot, built over 4 days, for friends. Current featureset includes: 
