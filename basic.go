@@ -29,3 +29,33 @@ func (j *JarvisBot) Clear(msg *message) {
 func (j *JarvisBot) Source(msg *message) {
 	j.bot.SendMessage(msg.Chat, "Touch me: https://github.com/ejamesc/jarvisbot", nil)
 }
+
+// Start returns some help text.
+func (j *JarvisBot) Start(msg *message) {
+	j.bot.SendMessage(msg.Chat, `Hi there! Jarvis can help you with the following things:
+
+/img - gets an image
+/gif - gets a gif
+/google - does a Google search
+/xchg - does an exchange rate conversion
+/youtube - does a Youtube search
+/clear - clears your NSFW images for you
+/psi - returns the current PSI numbers
+/echo - parrots stuff back at you
+
+Give these commands a try!`, nil)
+}
+
+func (j *JarvisBot) Help(msg *message) {
+	j.bot.SendMessage(msg.Chat, `Some commands:
+
+/img - gets an image
+/gif - gets a gif
+/google - does a Google search
+/xchg - does an exchange rate conversion
+/youtube - does a Youtube search
+/clear - clears your NSFW images for you
+/psi - returns the current PSI numbers
+/echo - parrots stuff back at you
+`, nil)
+}
