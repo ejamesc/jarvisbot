@@ -73,3 +73,12 @@ func (j *JarvisBot) sendFileWrapper(assetName string, filetype string) (Response
 		}
 	}, nil
 }
+
+// Returns pictures of keyword.
+// Used for joke functions, e.g. /ducks, because I like to say that
+func (j *JarvisBot) SendImage(keyword string) ResponseFunc {
+	return func(msg *message) {
+		msg.Args = []string{keyword}
+		j.ImageSearch(msg)
+	}
+}
