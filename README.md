@@ -15,6 +15,8 @@ Current featureset includes:
 * Grabs images
 * Grabs GIFs
 * Does Google searches
+* Does Youtube searches
+* Does location searches
 * Does exchange rate conversions
 * Displays the current air pollution index for all areas in Singapore
 * Clears your NSFW stuff
