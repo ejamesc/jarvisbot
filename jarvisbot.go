@@ -104,6 +104,7 @@ func (j *JarvisBot) getDefaultFuncMap() FuncMap {
 		"/gif":     j.GifSearch,
 		"/youtube": j.YoutubeSearch,
 		"/yt":      j.YoutubeSearch,
+		"/loc":     j.LocationSearch,
 	}
 }
 
