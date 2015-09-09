@@ -65,6 +65,6 @@ func main() {
 	bot.Listen(messages, 1*time.Second)
 
 	for message := range messages {
-		jb.Router(&message)
+		jb.Router(message)
 	}
 }

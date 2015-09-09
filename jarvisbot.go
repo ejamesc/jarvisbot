@@ -117,8 +117,8 @@ func (j *JarvisBot) AddFunction(command string, resp ResponseFunc) error {
 }
 
 // Route received Telegram messages to the appropriate response functions.
-func (j *JarvisBot) Router(msg *telebot.Message) {
-	jmsg := j.parseMessage(msg)
+func (j *JarvisBot) Router(msg telebot.Message) {
+	jmsg := j.parseMessage(&msg)
 	execFn := j.fmap[jmsg.Cmd]
 
 	if execFn != nil {
