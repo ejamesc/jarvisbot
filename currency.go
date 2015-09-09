@@ -196,6 +196,7 @@ var currencyCode = map[string]string{
 	"YEN":      "JPY",
 	"YUAN":     "CNY",
 	"EURO":     "EUR",
+	"EUROS":    "EUR",
 	"DONG":     "VND",
 	"AED":      "AED",
 	"AFN":      "AFN",
