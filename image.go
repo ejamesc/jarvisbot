@@ -65,6 +65,8 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 		}
 
 		j.sendPhotoFromURL(u, msg)
+	} else {
+		j.bot.SendMessage(msg.Chat, "My image search returned nothing. \U0001F622", &telebot.SendOptions{ReplyTo: *msg.Message})
 	}
 }
 
