@@ -221,8 +221,7 @@ func (j *JarvisBot) canSendWithinTimeLimit(chat *telebot.User) bool {
 		gb := b.Bucket([]byte(groupID))
 
 		if gb == nil {
-			j.log.Printf("[%s] invariant error - time limit checked for %s when no group bucket exists", time.Now().Format(time.RFC3339), groupID)
-			return nil
+			return fmt.Errorf("invariant error - time limit checked for %s when no group bucket exists", groupID)
 		}
 
 		timeString := gb.Get([]byte(timestampKey))
@@ -233,8 +232,7 @@ func (j *JarvisBot) canSendWithinTimeLimit(chat *telebot.User) bool {
 
 		lastTime, err := time.Parse(time.RFC3339, string(timeString))
 		if err != nil {
-			j.log.Printf("[%s] problem parsing timestring for group ID %s: %s", time.Now().Format(time.RFC3339), groupID, err)
-			return nil
+			return fmt.Errorf("problem parsing timestring for group ID %s: %s", groupID, err)
 		}
 
 		if time.Since(lastTime) > time.Hour {
