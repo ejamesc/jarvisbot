@@ -309,7 +309,7 @@ func resetTime(b *bolt.Bucket) error {
 	if err != nil {
 		return err
 	}
-	err = b.Put([]byte(countKey), []byte(strconv.Itoa(0)))
+	err = b.Put([]byte(countKey), []byte(strconv.Itoa(1)))
 	if err != nil {
 		return err
 	}
