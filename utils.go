@@ -25,6 +25,7 @@ const TEMPDIR = "temp"
 // are deleted after being sent to Telegram.
 func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 	errSO := &telebot.SendOptions{ReplyTo: *msg.Message}
+
 	urlPath := strings.Split(url.Path, "/")
 	imgName := urlPath[len(urlPath)-1]
 	ext := strings.ToLower(path.Ext(imgName))

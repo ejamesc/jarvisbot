@@ -20,6 +20,7 @@ import (
 )
 
 var exchange_rate_bucket_name = []byte("rates")
+var group_usernames_bucket_name = []byte("groups")
 
 // JarvisBot is the main struct. All response funcs bind to this.
 type JarvisBot struct {
@@ -88,23 +89,25 @@ func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, config map[string
 // Get the built-in, default FuncMap.
 func (j *JarvisBot) getDefaultFuncMap() FuncMap {
 	return FuncMap{
-		"/start":   j.Start,
-		"/help":    j.Help,
-		"/hello":   j.SayHello,
-		"/echo":    j.Echo,
-		"/xchg":    j.Exchange,
-		"/x":       j.Exchange,
-		"/clear":   j.Clear,
-		"/c":       j.Clear,
-		"/img":     j.ImageSearch,
-		"/psi":     j.PSI,
-		"/source":  j.Source,
-		"/google":  j.GoogleSearch,
-		"/g":       j.GoogleSearch,
-		"/gif":     j.GifSearch,
-		"/youtube": j.YoutubeSearch,
-		"/yt":      j.YoutubeSearch,
-		"/loc":     j.LocationSearch,
+		"/start":     j.Start,
+		"/help":      j.Help,
+		"/hello":     j.SayHello,
+		"/echo":      j.Echo,
+		"/xchg":      j.Exchange,
+		"/x":         j.Exchange,
+		"/clear":     j.Clear,
+		"/c":         j.Clear,
+		"/img":       j.ImageSearch,
+		"/psi":       j.PSI,
+		"/source":    j.Source,
+		"/google":    j.GoogleSearch,
+		"/g":         j.GoogleSearch,
+		"/gif":       j.GifSearch,
+		"/youtube":   j.YoutubeSearch,
+		"/yt":        j.YoutubeSearch,
+		"/loc":       j.LocationSearch,
+		"/pingsetup": j.CollectPing,
+		"/ping":      j.Ping,
 	}
 }
 
@@ -119,6 +122,10 @@ func (j *JarvisBot) AddFunction(command string, resp ResponseFunc) error {
 
 // Route received Telegram messages to the appropriate response functions.
 func (j *JarvisBot) Router(msg telebot.Message) {
+	// If the chat is a group chat, we save the username for the ping function.
+	if msg.Chat.IsGroupChat() {
+		j.GoSafely(func() { j.saveUsernameSafely(&msg.Chat, &msg.Sender) })
+	}
 	jmsg := j.parseMessage(&msg)
 	execFn := j.fmap[jmsg.Cmd]
 
@@ -155,7 +162,11 @@ func createAllBuckets(db *bolt.DB) error {
 	err := db.Update(func(tx *bolt.Tx) error {
 		_, err := tx.CreateBucketIfNotExists(exchange_rate_bucket_name)
 		if err != nil {
-			return fmt.Errorf("create bucket: %s", err)
+			return err
+		}
+		_, err = tx.CreateBucketIfNotExists(group_usernames_bucket_name)
+		if err != nil {
+			return err
 		}
 		return nil
 	})
