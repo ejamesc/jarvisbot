@@ -78,6 +78,8 @@ func (j *JarvisBot) GifSearch(msg *message) {
 		}
 
 		j.sendPhotoFromURL(u, msg)
+	} else {
+		j.bot.SendMessage(msg.Chat, "My gif search returned nothing. \U0001F622", nil)
 	}
 }
 
