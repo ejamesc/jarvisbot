@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 	"time"
 
@@ -13,6 +14,11 @@ import (
 )
 
 const GOOGLE_IMAGE_API_URL = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=5&imgsz=small|medium|large&q="
+
+const YAO_YUJIAN = "Yujian Yao"
+const YAO_YUJIAN_USERNAME = "@yyjhao"
+
+var SHAWN_TAN_RE *regexp.Regexp
 
 func (j *JarvisBot) ImageSearch(msg *message) {
 	if len(msg.Args) == 0 {
@@ -27,6 +33,12 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 		rawQuery = rawQuery + v + " "
 	}
 	rawQuery = strings.TrimSpace(rawQuery)
+
+	if msg.Sender.Username == YAO_YUJIAN_USERNAME {
+		// @yyjhao loves spamming "Shawn Tan", replace it with his name in queries
+		// This will usually return an image of his magnificent face
+		rawQuery = SHAWN_TAN_RE.ReplaceAllLiteralString(rawQuery, YAO_YUJIAN)
+	}
 	q := url.QueryEscape(rawQuery)
 
 	resp, err := http.Get(GOOGLE_IMAGE_API_URL + q)
@@ -83,4 +95,8 @@ func (i *imgResult) imgUrl() (*url.URL, error) {
 	} else {
 		return url.Parse(i.URL)
 	}
+}
+
+func init() {
+	SHAWN_TAN_RE = regexp.MustCompile("[Ss][Hh][Aa][Ww][Nn] *[Tt][Aa][Nn]")
 }
