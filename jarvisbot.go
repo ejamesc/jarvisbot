@@ -136,7 +136,9 @@ func (j *JarvisBot) Router(msg telebot.Message) {
 		j.GoSafely(func() { j.saveUsernameSafely(&msg.Chat, &msg.Sender) })
 	}
 	jmsg := j.parseMessage(&msg)
-	j.log.Printf("[%s] command: %s, args: %s", time.Now().Format(time.RFC3339), jmsg.Cmd, jmsg.GetArgString())
+	if jmsg.Cmd != "" {
+		j.log.Printf("[%s] command: %s, args: %s", time.Now().Format(time.RFC3339), jmsg.Cmd, jmsg.GetArgString())
+	}
 	execFn := j.fmap[jmsg.Cmd]
 
 	if execFn != nil {
