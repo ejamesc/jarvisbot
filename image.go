@@ -121,7 +121,6 @@ func dealWithYujian(rawQuery string) (string, error) {
 	if SHAWN_TAN_RE.MatchString(rawQuery) {
 		rawQuery = SHAWN_RE.ReplaceAllLiteralString(rawQuery, "Yujian")
 		rawQuery = TAN_RE.ReplaceAllLiteralString(rawQuery, "Yao")
-		//fmt.Println(rawQuery)
 	} else if tq := strings.Replace(rawQuery, " ", "", -1); SHAWN_TAN_RE.MatchString(tq) {
 		rawQuery = SHAWN_RE.ReplaceAllLiteralString(tq, "Yujian")
 		rawQuery = TAN_RE.ReplaceAllLiteralString(rawQuery, "Yao")
@@ -132,7 +131,7 @@ func dealWithYujian(rawQuery string) (string, error) {
 
 func isNotValidRange(input string) bool {
 	for _, c := range input {
-		if unicode.In(c, unicode.Han, unicode.Hiragana, unicode.Katakana, unicode.Yi, unicode.Hangul, unicode.Bopomofo, unicode.Latin) {
+		if !unicode.In(c, unicode.Han, unicode.Hiragana, unicode.Katakana, unicode.Yi, unicode.Hangul, unicode.Bopomofo, unicode.Latin, unicode.Space) {
 			return true
 		}
 	}
