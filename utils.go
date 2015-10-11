@@ -75,8 +75,14 @@ func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 		return
 	}
 	defer func() {
-		file.Close()
-		os.Remove(imgFilePath)
+		err := file.Close()
+		if err != nil {
+			j.log.Printf("error closing file: %s", err)
+		}
+		err = os.Remove(imgFilePath)
+		if err != nil {
+			j.log.Printf("error removing %s: %s", imgFilePath, err)
+		}
 	}()
 
 	// io.Copy supports copying large files.
@@ -98,7 +104,10 @@ func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 		j.bot.SendDocument(msg.Chat, doc, nil)
 	} else {
 		photo := &telebot.Photo{Thumbnail: telebot.Thumbnail{File: tFile}}
-		j.bot.SendPhoto(msg.Chat, photo, nil)
+		err := j.bot.SendPhoto(msg.Chat, photo, nil)
+		if err != nil {
+			j.log.Printf("[%s] error sending picture: %s", time.Now().Format(time.RFC3339), err)
+		}
 	}
 }
 
