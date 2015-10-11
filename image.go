@@ -2,6 +2,7 @@ package jarvisbot
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/tucnak/telebot"
 )
@@ -37,13 +39,13 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 	if msg.Sender.ID == YAO_YUJIAN_ID {
 		// @yyjhao loves spamming "Shawn Tan", replace it with his name in queries
 		// This will usually return an image of his magnificent face
-		if SHAWN_TAN_RE.MatchString(rawQuery) {
-			rawQuery = SHAWN_RE.ReplaceAllLiteralString(rawQuery, "Yujian")
-			rawQuery = TAN_RE.ReplaceAllLiteralString(rawQuery, "Yao")
-		} else if tq := strings.Replace(rawQuery, " ", "", -1); SHAWN_TAN_RE.MatchString(tq) {
-			rawQuery = SHAWN_RE.ReplaceAllLiteralString(tq, "Yujian")
-			rawQuery = TAN_RE.ReplaceAllLiteralString(tq, "Yao")
+		rq, err := dealWithYujian(rawQuery)
+		if err != nil {
+			so := &telebot.SendOptions{ReplyTo: *msg.Message}
+			j.bot.SendMessage(msg.Chat, "Nope. You're using characters outside of the Latin and East Asian character set. So, Nope.", so)
+			return
 		}
+		rawQuery = rq
 	}
 	rawQuery = strings.TrimSpace(rawQuery)
 	q := url.QueryEscape(rawQuery)
@@ -104,8 +106,35 @@ func (i *imgResult) imgUrl() (*url.URL, error) {
 	}
 }
 
+// For Yujian
 func init() {
 	SHAWN_TAN_RE = regexp.MustCompile("([Ss][Hh][Aa][Ww][Nn]).*([Tt][Aa][Nn])|([Tt][Aa][Nn]).*([Ss][Hh][Aa][Ww][Nn])")
 	SHAWN_RE = regexp.MustCompile("[Ss][Hh][Aa][Ww][Nn]")
 	TAN_RE = regexp.MustCompile("[Tt][Aa][Nn]")
+}
+
+func dealWithYujian(rawQuery string) (string, error) {
+	if isNotValidRange(rawQuery) {
+		return "", fmt.Errorf("Yujian tried using an invalid range.")
+	}
+
+	if SHAWN_TAN_RE.MatchString(rawQuery) {
+		rawQuery = SHAWN_RE.ReplaceAllLiteralString(rawQuery, "Yujian")
+		rawQuery = TAN_RE.ReplaceAllLiteralString(rawQuery, "Yao")
+		//fmt.Println(rawQuery)
+	} else if tq := strings.Replace(rawQuery, " ", "", -1); SHAWN_TAN_RE.MatchString(tq) {
+		rawQuery = SHAWN_RE.ReplaceAllLiteralString(tq, "Yujian")
+		rawQuery = TAN_RE.ReplaceAllLiteralString(rawQuery, "Yao")
+	}
+
+	return rawQuery, nil
+}
+
+func isNotValidRange(input string) bool {
+	for _, c := range input {
+		if unicode.In(c, unicode.Han, unicode.Hiragana, unicode.Katakana, unicode.Yi, unicode.Hangul, unicode.Bopomofo, unicode.Latin) {
+			return true
+		}
+	}
+	return false
 }
