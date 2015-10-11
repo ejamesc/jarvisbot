@@ -106,8 +106,7 @@ func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 		photo := &telebot.Photo{Thumbnail: telebot.Thumbnail{File: tFile}}
 		err := j.bot.SendPhoto(msg.Chat, photo, nil)
 		if err != nil {
-			serr := err.(telebot.SendError)
-			j.log.Printf("[%s] error sending picture: %s", time.Now().Format(time.RFC3339), serr.Payload)
+			j.log.Printf("[%s] error sending picture: %s", time.Now().Format(time.RFC3339), err.Error())
 		}
 	}
 }
