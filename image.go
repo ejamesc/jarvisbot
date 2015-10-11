@@ -2,7 +2,6 @@ package jarvisbot
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -11,6 +10,10 @@ import (
 	"strings"
 	"time"
 	"unicode"
+
+	"golang.org/x/text/runes"
+	"golang.org/x/text/transform"
+	"golang.org/x/text/width"
 
 	"github.com/tucnak/telebot"
 )
@@ -39,13 +42,7 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 	if msg.Sender.ID == YAO_YUJIAN_ID {
 		// @yyjhao loves spamming "Shawn Tan", replace it with his name in queries
 		// This will usually return an image of his magnificent face
-		rq, err := dealWithYujian(rawQuery)
-		if err != nil {
-			so := &telebot.SendOptions{ReplyTo: *msg.Message}
-			j.bot.SendMessage(msg.Chat, "Nope. You're using characters outside of the Latin and East Asian character set. So, Nope.", so)
-			return
-		}
-		rawQuery = rq
+		rawQuery = dealWithYujian(rawQuery)
 	}
 	rawQuery = strings.TrimSpace(rawQuery)
 	q := url.QueryEscape(rawQuery)
@@ -113,10 +110,10 @@ func init() {
 	TAN_RE = regexp.MustCompile("[Tt][Aa][Nn]")
 }
 
-func dealWithYujian(rawQuery string) (string, error) {
-	if isNotValidRange(rawQuery) {
-		return "", fmt.Errorf("Yujian tried using an invalid range.")
-	}
+func dealWithYujian(rawQuery string) string {
+	// We create a transformer that reduces all latin runes to their canonical form
+	t := runes.If(runes.In(unicode.Latin), width.Fold, nil)
+	rawQuery, _, _ = transform.String(t, rawQuery)
 
 	if SHAWN_TAN_RE.MatchString(rawQuery) {
 		rawQuery = SHAWN_RE.ReplaceAllLiteralString(rawQuery, "Yujian")
@@ -126,14 +123,5 @@ func dealWithYujian(rawQuery string) (string, error) {
 		rawQuery = TAN_RE.ReplaceAllLiteralString(rawQuery, "Yao")
 	}
 
-	return rawQuery, nil
-}
-
-func isNotValidRange(input string) bool {
-	for _, c := range input {
-		if !unicode.In(c, unicode.Han, unicode.Hiragana, unicode.Katakana, unicode.Yi, unicode.Hangul, unicode.Bopomofo, unicode.Latin, unicode.Space) {
-			return true
-		}
-	}
-	return false
+	return rawQuery
 }
