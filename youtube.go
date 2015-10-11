@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tucnak/telebot"
+	"github.com/ejamesc/telebot"
 )
 
 const YOUTUBE_SEARCH_ENDPOINT = "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=4&type=video&q=%s&key=%s"

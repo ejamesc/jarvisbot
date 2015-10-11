@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tucnak/telebot"
+	"github.com/ejamesc/telebot"
 )
 
 const PLACE_SEARCH_API = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=%s&key=%s"

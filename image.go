@@ -15,7 +15,7 @@ import (
 	"golang.org/x/text/transform"
 	"golang.org/x/text/width"
 
-	"github.com/tucnak/telebot"
+	"github.com/ejamesc/telebot"
 )
 
 const GOOGLE_IMAGE_API_URL = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=5&imgsz=small|medium|large&q="

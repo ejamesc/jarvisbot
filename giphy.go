@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tucnak/telebot"
+	"github.com/ejamesc/telebot"
 )
 
 const GIPHY_API_URL = "http://api.giphy.com/v1/gifs/search?q="

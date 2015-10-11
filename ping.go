@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/boltdb/bolt"
-	"github.com/tucnak/telebot"
+	"github.com/ejamesc/telebot"
 )
 
 const rateLimit = 3

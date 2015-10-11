@@ -15,8 +15,8 @@ import (
 	"time"
 
 	"github.com/boltdb/bolt"
+	"github.com/ejamesc/telebot"
 	"github.com/kardianos/osext"
-	"github.com/tucnak/telebot"
 )
 
 var exchange_rate_bucket_name = []byte("rates")

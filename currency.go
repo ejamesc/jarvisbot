@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/boltdb/bolt"
-	"github.com/tucnak/telebot"
+	"github.com/ejamesc/telebot"
 )
 
 const ENDPOINT = "https://openexchangerates.org/api/latest.json?app_id="

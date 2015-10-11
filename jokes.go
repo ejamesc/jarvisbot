@@ -6,8 +6,8 @@ import (
 	"os"
 	"path"
 
+	"github.com/ejamesc/telebot"
 	"github.com/kardianos/osext"
-	"github.com/tucnak/telebot"
 )
 
 // jokes.go contain joke functions. Not part of jarvisbot's default funcmap

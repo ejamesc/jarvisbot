@@ -1,6 +1,6 @@
 package jarvisbot
 
-import "github.com/tucnak/telebot"
+import "github.com/ejamesc/telebot"
 
 // SayHello says hi.
 func (j *JarvisBot) SayHello(msg *message) {

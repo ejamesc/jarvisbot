@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tucnak/telebot"
+	"github.com/ejamesc/telebot"
 )
 
 const SGP_URL = "http://sgp.si/now.json"

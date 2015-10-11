@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/ejamesc/jarvisbot"
+	"github.com/ejamesc/telebot"
 	"github.com/kardianos/osext"
-	"github.com/tucnak/telebot"
 )
 
 func main() {

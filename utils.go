@@ -13,9 +13,9 @@ import (
 	"time"
 
 	"github.com/boltdb/bolt"
+	"github.com/ejamesc/telebot"
 	"github.com/kardianos/osext"
 	"github.com/satori/go.uuid"
-	"github.com/tucnak/telebot"
 )
 
 const TEMPDIR = "temp"
