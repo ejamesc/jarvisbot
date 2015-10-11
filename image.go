@@ -16,7 +16,7 @@ import (
 const GOOGLE_IMAGE_API_URL = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=5&imgsz=small|medium|large&q="
 
 const YAO_YUJIAN = "Yujian Yao"
-const YAO_YUJIAN_USERNAME = "@yyjhao"
+const YAO_YUJIAN_ID = 36972523
 
 var SHAWN_TAN_RE *regexp.Regexp
 
@@ -34,7 +34,7 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 	}
 	rawQuery = strings.TrimSpace(rawQuery)
 
-	if msg.Sender.Username == YAO_YUJIAN_USERNAME {
+	if msg.Sender.ID == YAO_YUJIAN_ID {
 		// @yyjhao loves spamming "Shawn Tan", replace it with his name in queries
 		// This will usually return an image of his magnificent face
 		rawQuery = SHAWN_TAN_RE.ReplaceAllLiteralString(rawQuery, YAO_YUJIAN)
