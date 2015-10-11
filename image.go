@@ -15,10 +15,11 @@ import (
 
 const GOOGLE_IMAGE_API_URL = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=5&imgsz=small|medium|large&q="
 
-const YAO_YUJIAN = "Yujian Yao"
 const YAO_YUJIAN_ID = 36972523
 
 var SHAWN_TAN_RE *regexp.Regexp
+var SHAWN_RE *regexp.Regexp
+var TAN_RE *regexp.Regexp
 
 func (j *JarvisBot) ImageSearch(msg *message) {
 	if len(msg.Args) == 0 {
@@ -32,13 +33,19 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 	for _, v := range msg.Args {
 		rawQuery = rawQuery + v + " "
 	}
-	rawQuery = strings.TrimSpace(rawQuery)
 
 	if msg.Sender.ID == YAO_YUJIAN_ID {
 		// @yyjhao loves spamming "Shawn Tan", replace it with his name in queries
 		// This will usually return an image of his magnificent face
-		rawQuery = SHAWN_TAN_RE.ReplaceAllLiteralString(rawQuery, YAO_YUJIAN)
+		if SHAWN_TAN_RE.MatchString(rawQuery) {
+			rawQuery = SHAWN_RE.ReplaceAllLiteralString(rawQuery, "Yujian")
+			rawQuery = TAN_RE.ReplaceAllLiteralString(rawQuery, "Yao")
+		} else if tq := strings.Replace(rawQuery, " ", "", -1); SHAWN_TAN_RE.MatchString(tq) {
+			rawQuery = SHAWN_RE.ReplaceAllLiteralString(tq, "Yujian")
+			rawQuery = TAN_RE.ReplaceAllLiteralString(tq, "Yao")
+		}
 	}
+	rawQuery = strings.TrimSpace(rawQuery)
 	q := url.QueryEscape(rawQuery)
 
 	resp, err := http.Get(GOOGLE_IMAGE_API_URL + q)
@@ -98,5 +105,7 @@ func (i *imgResult) imgUrl() (*url.URL, error) {
 }
 
 func init() {
-	SHAWN_TAN_RE = regexp.MustCompile("[Ss][Hh][Aa][Ww][Nn] *[Tt][Aa][Nn]")
+	SHAWN_TAN_RE = regexp.MustCompile("([Ss][Hh][Aa][Ww][Nn]).*([Tt][Aa][Nn])|([Tt][Aa][Nn]).*([Ss][Hh][Aa][Ww][Nn])")
+	SHAWN_RE = regexp.MustCompile("[Ss][Hh][Aa][Ww][Nn]")
+	TAN_RE = regexp.MustCompile("[Tt][Aa][Nn]")
 }
