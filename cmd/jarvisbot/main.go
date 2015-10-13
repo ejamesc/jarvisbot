@@ -49,6 +49,7 @@ func main() {
 
 	jb.AddFunction("/laugh", jb.SendLaugh)
 	jb.AddFunction("/neverforget", jb.NeverForget)
+	jb.AddFunction("/hanar", jb.Hanar)
 	jb.AddFunction("/ducks", jb.SendImage("ducks"))
 	jb.AddFunction("/chickens", jb.SendImage("chickens"))
 

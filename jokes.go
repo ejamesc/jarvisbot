@@ -36,6 +36,18 @@ func (j *JarvisBot) NeverForget(msg *message) {
 	fn(msg)
 }
 
+// NeverForget returns the Barisan Socialis flag. Thx, @shawntan
+func (j *JarvisBot) Hanar(msg *message) {
+	j.bot.SendChatAction(msg.Chat, telebot.UploadingPhoto)
+
+	fn, err := j.sendFileWrapper("data/hanar.jpg", "photo")
+	if err != nil {
+		j.log.Printf("error sending file: %s", err)
+		return
+	}
+	fn(msg)
+}
+
 // sendFileWrapper checks if the file exists and writes it before returning the response function.
 func (j *JarvisBot) sendFileWrapper(assetName string, filetype string) (ResponseFunc, error) {
 	pwd, err := osext.ExecutableFolder()
