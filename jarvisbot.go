@@ -114,6 +114,8 @@ func (j *JarvisBot) getDefaultFuncMap() FuncMap {
 		"/gif":       j.GifSearch,
 		"/youtube":   j.YoutubeSearch,
 		"/yt":        j.YoutubeSearch,
+		"/urbandict": j.UrbanDictSearch,
+		"/ud":        j.UrbanDictSearch,
 		"/loc":       j.LocationSearch,
 		"/pingsetup": j.CollectPing,
 		"/ping":      j.Ping,

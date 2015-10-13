@@ -72,5 +72,7 @@ func (j *JarvisBot) YoutubeSearch(msg *message) {
 			resMsg = resMsg + fmt.Sprintf("%s%s - %s\n", YOUTUBE_VIDEO_BASE, v.Id.VideoId, v.Snippet.Title)
 		}
 		j.bot.SendMessage(msg.Chat, resMsg, nil)
+	} else {
+		j.bot.SendMessage(msg.Chat, "My Youtube search returned nothing. \U0001F622", nil)
 	}
 }

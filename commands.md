@@ -10,4 +10,5 @@ clear - clears your NSFW images for you
 psi - returns the current PSI numbers
 ping - sends a group-wide notification
 pingsetup - setup group-wide notification
+urbandict - search Urban Dictionary
 echo - parrots stuff back at you
