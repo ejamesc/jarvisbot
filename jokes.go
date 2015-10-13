@@ -3,6 +3,7 @@ package jarvisbot
 import (
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"path"
 
@@ -36,7 +37,10 @@ func (j *JarvisBot) NeverForget(msg *message) {
 	fn(msg)
 }
 
-// NeverForget returns the Barisan Socialis flag. Thx, @shawntan
+// Hanar returns a picture of a Hanar. Thx, @shawntan
+// Context: 'hanar, hanar, hanar' means 'yeah I get it, stop nagging'
+// in Singaporean Hokkien. The picture sent is a picture of a creature in
+// Mass Effect called a Hanar.
 func (j *JarvisBot) Hanar(msg *message) {
 	j.bot.SendChatAction(msg.Chat, telebot.UploadingPhoto)
 
@@ -46,6 +50,21 @@ func (j *JarvisBot) Hanar(msg *message) {
 		return
 	}
 	fn(msg)
+}
+
+// Touch allows Jarvis to be touched. Thx, @rahulg
+func (j *JarvisBot) Touch(msg *message) {
+	messages := []string{
+		"Why, thank you!",
+		"Stop touching me!",
+		"Ooh, that feels *so* good.",
+		"\U0001f60a",
+		"AAAAAHHHHHHHH!!!!!\n\nOh, frightened me for a moment, there.",
+		"Ouch! Watch it!",
+		"Noice!\nhttps://www.youtube.com/watch?v=rQnYi3z56RE",
+	}
+	n := rand.Intn(len(messages))
+	j.bot.SendMessage(msg.Chat, messages[n], nil)
 }
 
 // sendFileWrapper checks if the file exists and writes it before returning the response function.
