@@ -5,10 +5,10 @@ gif - gets a gif
 google - does a Google search
 xchg - does an exchange rate conversion
 youtube - does a Youtube search
+urbandict - search Urban Dictionary
 loc - does a location search
 clear - clears your NSFW images for you
 psi - returns the current PSI numbers
 ping - sends a group-wide notification
 pingsetup - setup group-wide notification
-urbandict - search Urban Dictionary
 echo - parrots stuff back at you

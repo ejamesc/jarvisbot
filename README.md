@@ -16,8 +16,10 @@ Current featureset includes:
 * Grabs GIFs
 * Does Google searches
 * Does Youtube searches
+* Does Urban Dictionary searches
 * Does location searches
 * Does exchange rate conversions
+* Notifies everyone in a chatroom using their usernames
 * Displays the current air pollution index for all areas in Singapore
 * Clears your NSFW stuff
 
@@ -39,7 +41,14 @@ Compile Jarvis for your target platform and upload the binary to your server.
 
 In the same directory as the binary, create a config.json file. (A
 config-sample.json has been provided for you to modify.) Remember to include the API keys
-in your config.json! 
+in your config.json:
+
+* name: Your bot's @username - this is currently unused, but may be used in the
+  future for @replies to your bot.
+* telegram_api_key: Your bot's Telegram bot api key, from Botfather.
+* open_exchange_api_key: An API key from https://openexchangerates.org/
+* youtube_api_key: A Google API key with Youtube enabled.
+* maps_api_key: A Google API key with Maps enabled.
 
 Last, but not least, make sure the user running the program has write permissions to its directory, 
 as Jarvis creates a jarvis.db file.
