@@ -22,7 +22,7 @@ func (j *JarvisBot) Echo(msg *message) {
 
 // Clear returns a message that clears out the folder
 func (j *JarvisBot) Clear(msg *message) {
-	j.bot.SendMessage(msg.Chat, "Lol, sure.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCleared.", nil)
+	j.bot.SendMessage(msg.Chat, "Lol, sure.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCleared.", nil)
 }
 
 // Source returns a link to Jarvis's source code.
