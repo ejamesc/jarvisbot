@@ -42,7 +42,9 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 	if msg.Sender.ID == YAO_YUJIAN_ID {
 		// @yyjhao loves spamming "Shawn Tan", replace it with his name in queries
 		// This will usually return an image of his magnificent face
-		rawQuery = dealWithYujian(rawQuery)
+		// rawQuery = dealWithYujian(rawQuery)
+		so := &telebot.SendOptions{ReplyTo: *msg.Message}
+		j.bot.SendMessage(msg.Chat, "No.", so)
 	}
 	rawQuery = strings.TrimSpace(rawQuery)
 	q := url.QueryEscape(rawQuery)
