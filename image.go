@@ -19,6 +19,7 @@ import (
 )
 
 const GOOGLE_IMAGE_API_URL = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=5&imgsz=small|medium|large&q="
+const GOOGLE_IMAGE_SAFE_API_URL = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=5&imgsz=small|medium|large&safe=active&q="
 
 const YAO_YUJIAN_ID = 36972523
 
@@ -39,18 +40,17 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 		rawQuery = rawQuery + v + " "
 	}
 
+	searchURL := GOOGLE_IMAGE_API_URL
 	if msg.Sender.ID == YAO_YUJIAN_ID {
 		// @yyjhao loves spamming "Shawn Tan", replace it with his name in queries
 		// This will usually return an image of his magnificent face
-		// rawQuery = dealWithYujian(rawQuery)
-		so := &telebot.SendOptions{ReplyTo: *msg.Message}
-		j.bot.SendMessage(msg.Chat, "No.", so)
-		return
+		rawQuery = dealWithYujian(rawQuery)
+		searchURL = GOOGLE_IMAGE_SAFE_API_URL
 	}
 	rawQuery = strings.TrimSpace(rawQuery)
 	q := url.QueryEscape(rawQuery)
 
-	resp, err := http.Get(GOOGLE_IMAGE_API_URL + q)
+	resp, err := http.Get(searchURL + q)
 	if err != nil {
 		j.log.Printf("failure retrieving images from Google for query '%s': %s", q, err)
 		return
