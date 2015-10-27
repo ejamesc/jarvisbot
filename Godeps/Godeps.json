@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/ejamesc/jarvisbot",
-	"GoVersion": "go1.4.2",
+	"GoVersion": "go1.5",
 	"Packages": [
 		"./..."
 	],
@@ -22,6 +22,18 @@
 			"ImportPath": "github.com/tucnak/telebot",
 			"Comment": "v1.0-9-g5db9cc7",
 			"Rev": "5db9cc7c56d68112e1735db1346e28aa4841d736"
+		},
+		{
+			"ImportPath": "golang.org/x/text/runes",
+			"Rev": "3eb7007b740b66a77f3c85f2660a0240b284115a"
+		},
+		{
+			"ImportPath": "golang.org/x/text/transform",
+			"Rev": "3eb7007b740b66a77f3c85f2660a0240b284115a"
+		},
+		{
+			"ImportPath": "golang.org/x/text/width",
+			"Rev": "3eb7007b740b66a77f3c85f2660a0240b284115a"
 		}
 	]
 }

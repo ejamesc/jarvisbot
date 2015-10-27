@@ -87,7 +87,7 @@ func (j *JarvisBot) Ping(msg *message) {
 }
 
 // saveUserToDB saves the given user to the given chat bucket in Bolt.
-func (j *JarvisBot) saveUserToDB(chat, sender *telebot.User) error {
+func (j *JarvisBot) saveUserToDB(chat *telebot.Chat, sender *telebot.User) error {
 	groupID, userID, username := strconv.Itoa(chat.ID), strconv.Itoa(sender.ID), sender.Username
 	if sender.Username == "" {
 		return fmt.Errorf("user has no username!")
@@ -114,7 +114,7 @@ func (j *JarvisBot) saveUserToDB(chat, sender *telebot.User) error {
 // doesn't currently exist.
 // We try as much as possible to avoid opening a Read-Write transaction, because
 // Bolt can only have one Read-Write transaction at any time.
-func (j *JarvisBot) saveUsernameSafely(chat, sender *telebot.User) {
+func (j *JarvisBot) saveUsernameSafely(chat *telebot.Chat, sender *telebot.User) {
 	if sender.Username == "" || !chat.IsGroupChat() {
 		return
 	}
@@ -129,7 +129,7 @@ func (j *JarvisBot) saveUsernameSafely(chat, sender *telebot.User) {
 
 // usernameExistsForChat checks if a username exists for a given chat.
 // This returns false if the userID exists but the username has changed.
-func (j *JarvisBot) usernameExistsForChat(chat, sender *telebot.User) bool {
+func (j *JarvisBot) usernameExistsForChat(chat *telebot.Chat, sender *telebot.User) bool {
 	res := false
 	// Guard against possibility that chat isn't a group chat.
 	// We're lazy here, returning true implies that we don't want to run a save.
@@ -159,7 +159,7 @@ func (j *JarvisBot) usernameExistsForChat(chat, sender *telebot.User) bool {
 }
 
 // getAllUsernamesForChat returns all usernames for a chat, sans the sender's.
-func (j *JarvisBot) getAllUsernamesForChat(chat, sender *telebot.User) (string, error) {
+func (j *JarvisBot) getAllUsernamesForChat(chat *telebot.Chat, sender *telebot.User) (string, error) {
 	uArray, groupID, senderID := []string{}, strconv.Itoa(chat.ID), strconv.Itoa(sender.ID)
 
 	if !chat.IsGroupChat() {
@@ -195,7 +195,7 @@ func (j *JarvisBot) getAllUsernamesForChat(chat, sender *telebot.User) (string, 
 }
 
 // Check if a bucket for the group chat already exists.
-func (j *JarvisBot) groupBucketExists(chat *telebot.User) bool {
+func (j *JarvisBot) groupBucketExists(chat *telebot.Chat) bool {
 	res, groupID := false, strconv.Itoa(chat.ID)
 
 	j.db.View(func(tx *bolt.Tx) error {
@@ -212,7 +212,7 @@ func (j *JarvisBot) groupBucketExists(chat *telebot.User) bool {
 
 // canSendWithinTimeLimit checks the time limit for the given group chat.
 // We limit pings per group chat to rateLimit every hour.
-func (j *JarvisBot) canSendWithinTimeLimit(chat *telebot.User) bool {
+func (j *JarvisBot) canSendWithinTimeLimit(chat *telebot.Chat) bool {
 	res := false
 	groupID := strconv.Itoa(chat.ID)
 
@@ -257,7 +257,7 @@ func (j *JarvisBot) canSendWithinTimeLimit(chat *telebot.User) bool {
 }
 
 // updateLastSentTime updates the last sent time for a given chat.
-func (j *JarvisBot) updateLastSentTime(chat *telebot.User) error {
+func (j *JarvisBot) updateLastSentTime(chat *telebot.Chat) error {
 	if !chat.IsGroupChat() {
 		return fmt.Errorf("chat is not a group chat!")
 	}
