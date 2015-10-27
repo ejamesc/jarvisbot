@@ -45,6 +45,7 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 		// rawQuery = dealWithYujian(rawQuery)
 		so := &telebot.SendOptions{ReplyTo: *msg.Message}
 		j.bot.SendMessage(msg.Chat, "No.", so)
+		return
 	}
 	rawQuery = strings.TrimSpace(rawQuery)
 	q := url.QueryEscape(rawQuery)
