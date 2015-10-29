@@ -46,6 +46,7 @@ func (j *JarvisBot) Start(msg *message) {
 /clear - clears your NSFW images for you
 /psi - returns the current PSI numbers
 /echo - parrots stuff back at you
+/urbandict - does an Urban Dictionary search
 
 Give these commands a try!`, nil)
 }
@@ -61,5 +62,6 @@ func (j *JarvisBot) Help(msg *message) {
 /clear - clears your NSFW images for you
 /psi - returns the current PSI numbers
 /echo - parrots stuff back at you
+/urbandict - does an Urban Dictionary search
 `, nil)
 }
