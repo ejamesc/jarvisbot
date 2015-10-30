@@ -41,7 +41,7 @@ func (j *JarvisBot) Exchange(msg *message) {
 	strDisplayRate := strconv.FormatFloat(displayRate, 'f', 5, 64)
 	fmtAmount := strconv.FormatFloat(res, 'f', 2, 64)
 
-	j.bot.SendMessage(msg.Chat, fromCurr+" to "+toCurr+"\nRate: 1.00 : "+strDisplayRate+"\n"+strconv.FormatFloat(amount, 'f', 2, 64)+" "+fromCurr+" = "+fmtAmount+" "+toCurr, nil)
+	j.bot.SendMessage(msg.Chat, "\U0001F4B8 "+fromCurr+" to "+toCurr+"\nRate: 1.00 : "+strDisplayRate+"\n"+strconv.FormatFloat(amount, 'f', 2, 64)+" "+fromCurr+" = "+fmtAmount+" "+toCurr, nil)
 }
 
 // Retrieve rates from DB.
