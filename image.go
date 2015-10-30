@@ -34,7 +34,8 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 		return
 	}
 
-	quit := persistentChatUpload(j, msg)
+	quitRepeat := j.RepeatChatAction(msg, telebot.UploadingPhoto)
+	defer func(){ quitRepeat <- true }()
 
 	rawQuery := ""
 	for _, v := range msg.Args {
@@ -54,7 +55,6 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 	resp, err := http.Get(searchURL + q)
 	if err != nil {
 		j.log.Printf("failure retrieving images from Google for query '%s': %s", q, err)
-		quit <- true
 		return
 	}
 
@@ -62,7 +62,6 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 	resp.Body.Close()
 	if err != nil {
 		j.log.Printf("failure reading json results from Google image search for query '%s': %s", q, err)
-		quit <- true
 		return
 	}
 
@@ -74,7 +73,6 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 	err = json.Unmarshal(jsonBody, &searchRes)
 	if err != nil {
 		j.log.Printf("failure unmarshalling json for image search query '%s': %s", q, err)
-		quit <- true
 		return
 	}
 
@@ -90,10 +88,8 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 		}
 
 		j.sendPhotoFromURL(u, msg)
-		quit <- true
 	} else {
 		j.bot.SendMessage(msg.Chat, "My image search returned nothing. \U0001F622", &telebot.SendOptions{ReplyTo: *msg.Message})
-		quit <- true
 	}
 }
 
@@ -135,15 +131,15 @@ func dealWithYujian(rawQuery string) string {
 	return rawQuery
 }
 
-func persistentChatUpload(j *JarvisBot, msg *message) (chan bool){
+func (j *JarvisBot) RepeatChatAction(msg *message, action string) (chan bool){
 	ticker := time.NewTicker(5 * time.Second)
 	quit := make(chan bool)
-	j.bot.SendChatAction(msg.Chat, telebot.UploadingPhoto)
+	j.bot.SendChatAction(msg.Chat, action)
 	j.GoSafely(func() {
 		for {
 			select {
 			case <- ticker.C:
-				j.bot.SendChatAction(msg.Chat, telebot.UploadingPhoto)
+				j.bot.SendChatAction(msg.Chat, action)
 			case <- quit:
 				ticker.Stop()
 				return
