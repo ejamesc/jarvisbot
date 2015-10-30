@@ -55,11 +55,15 @@ func main() {
 	jb.AddFunction("/chickens", jb.SendImage("chickens"))
 
 	jb.GoSafely(func() {
-		logger.Println("Scheduling exchange rate update")
+		logger.Printf("[%s] Scheduler Started", time.Now().Format(time.RFC3339))
+		ticker := time.NewTicker(1 * time.Hour)
 		for {
-			time.Sleep(1 * time.Hour)
-			jb.RetrieveAndSaveExchangeRates()
-			logger.Printf("[%s] exchange rates updated!", time.Now().Format(time.RFC3339))
+			select {
+			case <- ticker.C:
+				logger.Printf("[%s] Scheduler running interval tasks", time.Now().Format(time.RFC3339))
+				jb.RetrieveAndSaveExchangeRates()
+				logger.Printf("[%s] exchange rates updated!", time.Now().Format(time.RFC3339))
+			}
 		}
 	})
 
