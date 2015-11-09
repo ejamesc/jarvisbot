@@ -38,15 +38,15 @@ func (j *JarvisBot) Source(msg *message) {
 func (j *JarvisBot) Start(msg *message) {
 	j.bot.SendMessage(msg.Chat, `Hi there! I can help you with the following things:
 
-/clear - clears your NSFW images for you
-/echo - parrots stuff back at you
+/img - gets an image
 /gif - gets a gif
 /google - does a Google search
-/img - gets an image
-/psi - returns the current PSI numbers
-/urbandict - does an Urban Dictionary search
 /xchg - does an exchange rate conversion
 /youtube - does a Youtube search
+/clear - clears your NSFW images for you
+/psi - returns the current PSI numbers
+/echo - parrots stuff back at you
+/urbandict - does an Urban Dictionary search
 
 Give these commands a try!`, nil)
 }
@@ -54,14 +54,14 @@ Give these commands a try!`, nil)
 func (j *JarvisBot) Help(msg *message) {
 	j.bot.SendMessage(msg.Chat, `Some commands:
 
-/clear - clears your NSFW images for you
-/echo - parrots stuff back at you
+/img - gets an image
 /gif - gets a gif
 /google - does a Google search
-/img - gets an image
-/psi - returns the current PSI numbers
-/urbandict - does an Urban Dictionary search
 /xchg - does an exchange rate conversion
 /youtube - does a Youtube search
+/clear - clears your NSFW images for you
+/psi - returns the current PSI numbers
+/echo - parrots stuff back at you
+/urbandict - does an Urban Dictionary search
 `, nil)
 }
