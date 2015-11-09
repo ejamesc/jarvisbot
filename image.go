@@ -35,7 +35,7 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 	}
 
 	quitRepeat := j.RepeatChatAction(msg, telebot.UploadingPhoto)
-	defer func(){ quitRepeat <- true }()
+	defer func() { quitRepeat <- true }()
 
 	rawQuery := ""
 	for _, v := range msg.Args {
@@ -129,22 +129,4 @@ func dealWithYujian(rawQuery string) string {
 	}
 
 	return rawQuery
-}
-
-func (j *JarvisBot) RepeatChatAction(msg *message, action string) (chan bool){
-	ticker := time.NewTicker(5 * time.Second)
-	quit := make(chan bool)
-	j.bot.SendChatAction(msg.Chat, action)
-	j.GoSafely(func() {
-		for {
-			select {
-			case <- ticker.C:
-				j.bot.SendChatAction(msg.Chat, action)
-			case <- quit:
-				ticker.Stop()
-				return
-			}
-		}
-	})
-	return quit
 }

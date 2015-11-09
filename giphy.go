@@ -24,12 +24,8 @@ func (j *JarvisBot) GifSearch(msg *message) {
 		return
 	}
 
-	j.bot.SendChatAction(msg.Chat, telebot.UploadingPhoto)
-	// TODO: Change this to listen on channel for status
-	go func() {
-		time.Sleep(6 * time.Second)
-		j.bot.SendChatAction(msg.Chat, telebot.UploadingPhoto)
-	}()
+	quitRepeat := j.RepeatChatAction(msg, telebot.UploadingPhoto)
+	defer func() { quitRepeat <- true }()
 
 	rawQuery := ""
 	for _, v := range msg.Args {
