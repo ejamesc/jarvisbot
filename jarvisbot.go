@@ -139,7 +139,7 @@ func (j *JarvisBot) Router(msg telebot.Message) {
 	}
 	jmsg := j.parseMessage(&msg)
 	if jmsg.Cmd != "" {
-		j.log.Printf("[%s] command: %s, args: %s", time.Now().Format(time.RFC3339), jmsg.Cmd, jmsg.GetArgString())
+		j.log.Printf("[%s][id: %d] command: %s, args: %s", time.Now().Format(time.RFC3339), jmsg.ID, jmsg.Cmd, jmsg.GetArgString())
 	}
 	execFn := j.fmap[jmsg.Cmd]
 
