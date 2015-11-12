@@ -65,7 +65,7 @@ func (j *JarvisBot) Touch(msg *message) {
 	}
 	n := rand.Intn(len(messages))
 	so := &telebot.SendOptions{ParseMode: telebot.ModeMarkdown}
-	j.bot.SendMessage(msg.Chat, messages[n], so)
+	j.SendMessage(msg.Chat, messages[n], so)
 }
 
 // sendFileWrapper checks if the file exists and writes it before returning the response function.

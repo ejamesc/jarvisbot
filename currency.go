@@ -19,13 +19,13 @@ const ENDPOINT = "https://openexchangerates.org/api/latest.json?app_id="
 func (j *JarvisBot) Exchange(msg *message) {
 	if len(msg.Args) == 0 {
 		so := &telebot.SendOptions{ReplyTo: *msg.Message, ReplyMarkup: telebot.ReplyMarkup{ForceReply: true, Selective: true}}
-		j.bot.SendMessage(msg.Chat, "/xchg: Do an exchange rate conversion\nHere are some commands to try: \n* 10 sgd in usd\n* 100 vnd to sgd\n* 21 usd how much arr?\n\n\U0001F4A1 You could also use this format for faster results:\n/x 10 sgd in usd", so)
+		j.SendMessage(msg.Chat, "/xchg: Do an exchange rate conversion\nHere are some commands to try: \n* 10 sgd in usd\n* 100 vnd to sgd\n* 21 usd how much arr?\n\n\U0001F4A1 You could also use this format for faster results:\n/x 10 sgd in usd", so)
 		return
 	}
 
 	amount, fromCurr, toCurr := parseArgs(msg.Args)
 	if amount == 0.0 || fromCurr == "" || toCurr == "" {
-		j.bot.SendMessage(msg.Chat, "I didn't understand that. Here are some commands to try: \n/xchg 10 sgd in usd\n/xchg 100 vnd to sgd\n/xchg 21 usd how much arr?", nil)
+		j.SendMessage(msg.Chat, "I didn't understand that. Here are some commands to try: \n/xchg 10 sgd in usd\n/xchg 100 vnd to sgd\n/xchg 21 usd how much arr?", nil)
 		return
 	}
 
@@ -41,7 +41,7 @@ func (j *JarvisBot) Exchange(msg *message) {
 	strDisplayRate := strconv.FormatFloat(displayRate, 'f', 5, 64)
 	fmtAmount := strconv.FormatFloat(res, 'f', 2, 64)
 
-	j.bot.SendMessage(msg.Chat, "\U0001F4B8 "+fromCurr+" to "+toCurr+"\nRate: 1.00 : "+strDisplayRate+"\n"+strconv.FormatFloat(amount, 'f', 2, 64)+" "+fromCurr+" = "+fmtAmount+" "+toCurr, nil)
+	j.SendMessage(msg.Chat, "\U0001F4B8 "+fromCurr+" to "+toCurr+"\nRate: 1.00 : "+strDisplayRate+"\n"+strconv.FormatFloat(amount, 'f', 2, 64)+" "+fromCurr+" = "+fmtAmount+" "+toCurr, nil)
 }
 
 // Retrieve rates from DB.

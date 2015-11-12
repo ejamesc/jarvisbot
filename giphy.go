@@ -20,7 +20,7 @@ const GIPHY_PUBLIC_BETA_KEY = "dc6zaTOxFJmzC"
 func (j *JarvisBot) GifSearch(msg *message) {
 	if len(msg.Args) == 0 {
 		so := &telebot.SendOptions{ReplyTo: *msg.Message, ReplyMarkup: telebot.ReplyMarkup{ForceReply: true, Selective: true}}
-		j.bot.SendMessage(msg.Chat, "/gif: Get a gif\nHere are some commands to try: \n* dance dance\n\n\U0001F4A1 You could also use this format for faster results:\n/gif dance dance", so)
+		j.SendMessage(msg.Chat, "/gif: Get a gif\nHere are some commands to try: \n* dance dance\n\n\U0001F4A1 You could also use this format for faster results:\n/gif dance dance", so)
 		return
 	}
 
@@ -75,7 +75,7 @@ func (j *JarvisBot) GifSearch(msg *message) {
 
 		j.sendPhotoFromURL(u, msg)
 	} else {
-		j.bot.SendMessage(msg.Chat, "My gif search returned nothing. \U0001F622", nil)
+		j.SendMessage(msg.Chat, "My gif search returned nothing. \U0001F622", nil)
 	}
 }
 

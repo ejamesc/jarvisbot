@@ -30,7 +30,7 @@ var TAN_RE *regexp.Regexp
 func (j *JarvisBot) ImageSearch(msg *message) {
 	if len(msg.Args) == 0 {
 		so := &telebot.SendOptions{ReplyTo: *msg.Message, ReplyMarkup: telebot.ReplyMarkup{ForceReply: true, Selective: true}}
-		j.bot.SendMessage(msg.Chat, "/img: Get an image\nHere are some commands to try: \n* pappy dog\n\n\U0001F4A1 You could also use this format for faster results:\n/img pappy dog", so)
+		j.SendMessage(msg.Chat, "/img: Get an image\nHere are some commands to try: \n* pappy dog\n\n\U0001F4A1 You could also use this format for faster results:\n/img pappy dog", so)
 		return
 	}
 
@@ -89,7 +89,7 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 
 		j.sendPhotoFromURL(u, msg)
 	} else {
-		j.bot.SendMessage(msg.Chat, "My image search returned nothing. \U0001F622", &telebot.SendOptions{ReplyTo: *msg.Message})
+		j.SendMessage(msg.Chat, "My image search returned nothing. \U0001F622", &telebot.SendOptions{ReplyTo: *msg.Message})
 	}
 }
 

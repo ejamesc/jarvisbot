@@ -50,7 +50,7 @@ func (j *JarvisBot) PSI(msg *message) {
 	}
 
 	if len(msg.Args) == 0 {
-		j.bot.SendMessage(msg.Chat, "\U0001F4AD PSI Readings:\n* PSI (3hr): "+strconv.Itoa(psi.Overall.PSI_3h)+"\n* PSI (24hr): "+psi.Overall.PSI_24h+"\n* PM2.5 (1hr): "+psi.Overall.PM2_5_1h+"\n\n\U0001F550 "+psi.LastGenerated, nil)
+		j.SendMessage(msg.Chat, "\U0001F4AD PSI Readings:\n* PSI (3hr): "+strconv.Itoa(psi.Overall.PSI_3h)+"\n* PSI (24hr): "+psi.Overall.PSI_24h+"\n* PM2.5 (1hr): "+psi.Overall.PM2_5_1h+"\n\n\U0001F550 "+psi.LastGenerated, nil)
 	} else {
 		direction := ""
 		for _, v := range msg.Args {
@@ -76,7 +76,7 @@ func (j *JarvisBot) PSI(msg *message) {
 		default:
 			msgText = "I didn't understand that. Try:\n* /psi east\n* /psi central\n* /psi c"
 		}
-		j.bot.SendMessage(msg.Chat, msgText, nil)
+		j.SendMessage(msg.Chat, msgText, nil)
 	}
 
 }

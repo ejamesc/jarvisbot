@@ -217,3 +217,7 @@ func (j *JarvisBot) parseMessage(msg *telebot.Message) *message {
 
 	return &message{Cmd: cmd, Args: args, Message: msg}
 }
+
+func (j *JarvisBot) SendMessage(recipient telebot.Recipient, msg string, options *telebot.SendOptions) {
+	j.bot.SendMessage(recipient, msg, options)
+}

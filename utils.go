@@ -33,7 +33,7 @@ func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 	// If the URL doesn't end with a valid image filename, stop.
 	if ext != ".jpg" && ext != ".png" && ext != ".jpeg" && ext != ".gif" {
 		j.log.Printf("[%s] invalid image filename: %s", time.Now().Format(time.RFC3339), ext)
-		j.bot.SendMessage(msg.Chat, "I got an image with an invalid image extension, I'm afraid: "+url.String(), errSO)
+		j.SendMessage(msg.Chat, "I got an image with an invalid image extension, I'm afraid: "+url.String(), errSO)
 		return
 	}
 
@@ -41,7 +41,7 @@ func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 	resp, err := http.Get(url.String())
 	if err != nil {
 		j.log.Printf("[%s] error retrieving image:\n%s", time.Now().Format(time.RFC3339), err)
-		j.bot.SendMessage(msg.Chat, "I encountered a problem when retrieving the image: "+url.String(), errSO)
+		j.SendMessage(msg.Chat, "I encountered a problem when retrieving the image: "+url.String(), errSO)
 
 		return
 	}

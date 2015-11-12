@@ -16,7 +16,7 @@ const UD_SEARCH_ENDPOINT = "http://api.urbandictionary.com/v0/define?term=%s"
 func (j *JarvisBot) UrbanDictSearch(msg *message) {
 	if len(msg.Args) == 0 {
 		so := &telebot.SendOptions{ReplyTo: *msg.Message, ReplyMarkup: telebot.ReplyMarkup{ForceReply: true, Selective: true}}
-		j.bot.SendMessage(msg.Chat, "/urbandict: Does an Urban Dictonary search\nHere are some commands to try: \n* fleek\n* sapiosexual\n\n\U0001F4A1 You could also use this format for faster results:\n/ud fleek", so)
+		j.SendMessage(msg.Chat, "/urbandict: Does an Urban Dictonary search\nHere are some commands to try: \n* fleek\n* sapiosexual\n\n\U0001F4A1 You could also use this format for faster results:\n/ud fleek", so)
 		return
 	}
 
@@ -59,8 +59,8 @@ func (j *JarvisBot) UrbanDictSearch(msg *message) {
 	if len(searchRes.List) > 0 {
 		r := searchRes.List[0]
 		rm := fmt.Sprintf(resMsg, r.Word, r.Definition, r.Example)
-		j.bot.SendMessage(msg.Chat, rm, nil)
+		j.SendMessage(msg.Chat, rm, nil)
 	} else {
-		j.bot.SendMessage(msg.Chat, "My Urban Dictionary search returned nothing. \U0001F622", nil)
+		j.SendMessage(msg.Chat, "My Urban Dictionary search returned nothing. \U0001F622", nil)
 	}
 }

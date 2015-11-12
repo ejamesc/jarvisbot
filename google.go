@@ -16,7 +16,7 @@ const GOOGLE_SEARCH_API = "http://ajax.googleapis.com/ajax/services/search/web?v
 func (j *JarvisBot) GoogleSearch(msg *message) {
 	if len(msg.Args) == 0 {
 		so := &telebot.SendOptions{ReplyTo: *msg.Message, ReplyMarkup: telebot.ReplyMarkup{ForceReply: true, Selective: true}}
-		j.bot.SendMessage(msg.Chat, "/google: Do a Google search\nHere are some commands to try: \n* best chicken rice\n* mee siam mai hum\n\n\U0001F4A1 You could also use this format for faster results:\n/g mee siam mai hum", so)
+		j.SendMessage(msg.Chat, "/google: Do a Google search\nHere are some commands to try: \n* best chicken rice\n* mee siam mai hum\n\n\U0001F4A1 You could also use this format for faster results:\n/g mee siam mai hum", so)
 		return
 	}
 
@@ -63,7 +63,7 @@ func (j *JarvisBot) GoogleSearch(msg *message) {
 				continue
 			}
 		}
-		j.bot.SendMessage(msg.Chat, resMsg, nil)
+		j.SendMessage(msg.Chat, resMsg, nil)
 	}
 
 }

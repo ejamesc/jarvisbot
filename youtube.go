@@ -18,7 +18,7 @@ const YOUTUBE_VIDEO_BASE = "https://www.youtube.com/watch?v="
 func (j *JarvisBot) YoutubeSearch(msg *message) {
 	if len(msg.Args) == 0 {
 		so := &telebot.SendOptions{ReplyTo: *msg.Message, ReplyMarkup: telebot.ReplyMarkup{ForceReply: true, Selective: true}}
-		j.bot.SendMessage(msg.Chat, "/youtube: Does a Youtube search\nHere are some commands to try: \n* unbelievable spouse for house\n* okgo\n\n\U0001F4A1 You could also use this format for faster results:\n/yt okgo", so)
+		j.SendMessage(msg.Chat, "/youtube: Does a Youtube search\nHere are some commands to try: \n* unbelievable spouse for house\n* okgo\n\n\U0001F4A1 You could also use this format for faster results:\n/yt okgo", so)
 		return
 	}
 
@@ -71,8 +71,8 @@ func (j *JarvisBot) YoutubeSearch(msg *message) {
 		for _, v := range searchRes.Items {
 			resMsg = resMsg + fmt.Sprintf("%s%s - %s\n", YOUTUBE_VIDEO_BASE, v.Id.VideoId, v.Snippet.Title)
 		}
-		j.bot.SendMessage(msg.Chat, resMsg, nil)
+		j.SendMessage(msg.Chat, resMsg, nil)
 	} else {
-		j.bot.SendMessage(msg.Chat, "My Youtube search returned nothing. \U0001F622", nil)
+		j.SendMessage(msg.Chat, "My Youtube search returned nothing. \U0001F622", nil)
 	}
 }

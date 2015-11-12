@@ -17,7 +17,7 @@ const timestampKey = "timestamp"
 // This allows Jarvis to collect their usernames
 func (j *JarvisBot) CollectPing(msg *message) {
 	if !msg.Chat.IsGroupChat() {
-		j.bot.SendMessage(msg.Chat, "This feature only works in group chats, sorry!", nil)
+		j.SendMessage(msg.Chat, "This feature only works in group chats, sorry!", nil)
 		return
 	}
 
@@ -25,7 +25,7 @@ func (j *JarvisBot) CollectPing(msg *message) {
 		so := &telebot.SendOptions{ReplyTo: *msg.Message}
 
 		if msg.Sender.Username == "" {
-			j.bot.SendMessage(msg.Chat, "I'm afraid you don't have a username, "+msg.Sender.FirstName+". You should create one if you'd like @ notifications.", so)
+			j.SendMessage(msg.Chat, "I'm afraid you don't have a username, "+msg.Sender.FirstName+". You should create one if you'd like @ notifications.", so)
 		} else {
 			if !j.usernameExistsForChat(&msg.Chat, &msg.Sender) {
 				err := j.saveUserToDB(&msg.Chat, &msg.Sender)
@@ -34,11 +34,11 @@ func (j *JarvisBot) CollectPing(msg *message) {
 					return
 				}
 			}
-			j.bot.SendMessage(msg.Chat, "Thanks, "+msg.Sender.FirstName+". I've saved @"+msg.Sender.Username+" for use later.", so)
+			j.SendMessage(msg.Chat, "Thanks, "+msg.Sender.FirstName+". I've saved @"+msg.Sender.Username+" for use later.", so)
 		}
 	} else {
 		so := &telebot.SendOptions{ReplyMarkup: telebot.ReplyMarkup{ForceReply: true}}
-		j.bot.SendMessage(msg.Chat, "/pingsetup: Sets up ping functionality\nPlease reply to this so I can store your username \U0001F60A", so)
+		j.SendMessage(msg.Chat, "/pingsetup: Sets up ping functionality\nPlease reply to this so I can store your username \U0001F60A", so)
 	}
 }
 
@@ -46,18 +46,18 @@ func (j *JarvisBot) CollectPing(msg *message) {
 // This is used for alerting all members in a group.
 func (j *JarvisBot) Ping(msg *message) {
 	if !msg.Chat.IsGroupChat() {
-		j.bot.SendMessage(msg.Chat, "This feature only works in group chats, sorry!", nil)
+		j.SendMessage(msg.Chat, "This feature only works in group chats, sorry!", nil)
 		return
 	}
 
 	// We don't accept pings from people without usernames.
 	if msg.Sender.Username == "" {
-		j.bot.SendMessage(msg.Chat, "You can only ping if you have a username yourself, sorry!", nil)
+		j.SendMessage(msg.Chat, "You can only ping if you have a username yourself, sorry!", nil)
 		return
 	}
 
 	if !j.groupBucketExists(&msg.Chat) {
-		j.bot.SendMessage(msg.Chat, "I don't have any records for this group. Perhaps run /pingsetup first?", nil)
+		j.SendMessage(msg.Chat, "I don't have any records for this group. Perhaps run /pingsetup first?", nil)
 		return
 	}
 
@@ -69,7 +69,7 @@ func (j *JarvisBot) Ping(msg *message) {
 		}
 
 		if usernames == "" {
-			j.bot.SendMessage(msg.Chat, "I'm afraid I don't currently have any other usernames for this group apart from yours, "+msg.Sender.FirstName+".", &telebot.SendOptions{ReplyTo: *msg.Message})
+			j.SendMessage(msg.Chat, "I'm afraid I don't currently have any other usernames for this group apart from yours, "+msg.Sender.FirstName+".", &telebot.SendOptions{ReplyTo: *msg.Message})
 			return
 		}
 
@@ -80,9 +80,9 @@ func (j *JarvisBot) Ping(msg *message) {
 
 		// We update the last saved time and hour count.
 		j.updateLastSentTime(&msg.Chat)
-		j.bot.SendMessage(msg.Chat, usernames+message, nil)
+		j.SendMessage(msg.Chat, usernames+message, nil)
 	} else {
-		j.bot.SendMessage(msg.Chat, "Rate limit reached! You can only send "+strconv.Itoa(rateLimit)+" pings to a group every hour.", nil)
+		j.SendMessage(msg.Chat, "Rate limit reached! You can only send "+strconv.Itoa(rateLimit)+" pings to a group every hour.", nil)
 	}
 }
 

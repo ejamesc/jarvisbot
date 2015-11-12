@@ -19,7 +19,7 @@ const PLACE_SEARCH_API = "https://maps.googleapis.com/maps/api/place/textsearch/
 func (j *JarvisBot) LocationSearch(msg *message) {
 	if len(msg.Args) == 0 {
 		so := &telebot.SendOptions{ReplyTo: *msg.Message, ReplyMarkup: telebot.ReplyMarkup{ForceReply: true, Selective: true}}
-		j.bot.SendMessage(msg.Chat, "/loc: Does a location search\nHere are some commands to try: \n* serangoon gardens\n* rail mall singapore\n\n\U0001F4A1 You could also use this format for faster results:\n/loc chomp chomp food", so)
+		j.SendMessage(msg.Chat, "/loc: Does a location search\nHere are some commands to try: \n* serangoon gardens\n* rail mall singapore\n\n\U0001F4A1 You could also use this format for faster results:\n/loc chomp chomp food", so)
 		return
 	}
 
