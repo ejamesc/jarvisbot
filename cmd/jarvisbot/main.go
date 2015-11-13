@@ -51,8 +51,8 @@ func main() {
 	jb.AddFunction("/neverforget", jb.NeverForget)
 	jb.AddFunction("/touch", jb.Touch)
 	jb.AddFunction("/hanar", jb.Hanar)
-	jb.AddFunction("/ducks", jb.SendImage("ducks"))
-	jb.AddFunction("/chickens", jb.SendImage("chickens"))
+	jb.AddFunction("/ducks", jb.SendImage("quack quack motherfucker"))
+	jb.AddFunction("/chickens", jb.SendImage("cluck cluck motherfucker"))
 
 	jb.GoSafely(func() {
 		logger.Println("Scheduling exchange rate update")
