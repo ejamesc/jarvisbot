@@ -124,7 +124,7 @@ func (j *JarvisBot) getDefaultFuncMap() FuncMap {
 
 // Add a response function to the FuncMap
 func (j *JarvisBot) AddFunction(command string, resp ResponseFunc) error {
-	if !strings.Contains(command, "/") {
+	if !strings.HasPrefix(command, "/") {
 		return fmt.Errorf("not a valid command string - it should be of the format /something")
 	}
 	j.fmap[command] = resp
@@ -205,7 +205,7 @@ func (j *JarvisBot) parseMessage(msg *telebot.Message) *message {
 			}
 		}
 	} else {
-		msgTokens := strings.Split(msg.Text, " ")
+		msgTokens := strings.Fields(msg.Text)
 		cmd, args = strings.ToLower(msgTokens[0]), msgTokens[1:]
 		// Deal with commands of the form command@JarvisBot, which appear in
 		// group chats.
