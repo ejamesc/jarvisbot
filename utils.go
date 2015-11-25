@@ -6,10 +6,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/boltdb/bolt"
@@ -20,18 +18,39 @@ import (
 
 const TEMPDIR = "temp"
 
+func extFromContentType(ct string) string {
+	switch ct {
+	case "image/jpeg":
+		return ".jpg"
+	case "image/png":
+		return ".png"
+	case "image/gif":
+		return ".gif"
+	default:
+		// not an image
+		return ""
+	}
+}
+
+func contentType(u *url.URL) string {
+	resp, err := http.Head(u.String())
+	defer resp.Body.Close()
+	if err != nil {
+		return "application/octet-stream"
+	}
+	return resp.Header.Get("Content-Type")
+}
+
 // sendPhotoFromURL is a helper function to send a photo from a URL to a chat.
 // Photos are temporarily stored in a temp folder in the same directory, and
 // are deleted after being sent to Telegram.
 func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 	errSO := &telebot.SendOptions{ReplyTo: *msg.Message}
 
-	urlPath := strings.Split(url.Path, "/")
-	imgName := urlPath[len(urlPath)-1]
-	ext := strings.ToLower(path.Ext(imgName))
-
-	// If the URL doesn't end with a valid image filename, stop.
-	if ext != ".jpg" && ext != ".png" && ext != ".jpeg" && ext != ".gif" {
+	ct := contentType(url)
+	ext := extFromContentType(ct)
+	// If the content-type isn't whitelisted, return the URL instead.
+	if ext == "" {
 		j.log.Printf("[%s] invalid image filename: %s", time.Now().Format(time.RFC3339), ext)
 		j.SendMessage(msg.Chat, "I got an image with an invalid image extension, I'm afraid: "+url.String(), errSO)
 		return
