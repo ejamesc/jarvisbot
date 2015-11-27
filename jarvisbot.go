@@ -204,7 +204,7 @@ func (j *JarvisBot) parseMessage(msg *telebot.Message) *message {
 				break
 			}
 		}
-	} else {
+	} else if msg.Text != "" {
 		msgTokens := strings.Fields(msg.Text)
 		cmd, args = strings.ToLower(msgTokens[0]), msgTokens[1:]
 		// Deal with commands of the form command@JarvisBot, which appear in
