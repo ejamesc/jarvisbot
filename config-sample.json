@@ -3,5 +3,7 @@
   "telegram_api_key": "",
   "open_exchange_api_key": "",
   "youtube_api_key": "",
-  "maps_api_key": ""
+  "maps_api_key": "",
+  "custom_search_id": "",
+  "custom_search_api_key": ""
 }

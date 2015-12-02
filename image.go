@@ -2,6 +2,7 @@ package jarvisbot
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -18,8 +19,8 @@ import (
 	"github.com/tucnak/telebot"
 )
 
-const GOOGLE_IMAGE_API_URL = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=5&imgsz=small|medium|large&q="
-const GOOGLE_IMAGE_SAFE_API_URL = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=5&imgsz=small|medium|large&safe=active&q="
+const googleImageApiUrl = "https://www.googleapis.com/customsearch/v1?key=%s&cx=%s&searchType=image&q="
+const googleImageSafeApiUrl = "https://www.googleapis.com/customsearch/v1?key=%s&cx=%s&searchType=image&safe=high&q="
 
 const YAO_YUJIAN_ID = 36972523
 
@@ -42,12 +43,22 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 		rawQuery = rawQuery + v + " "
 	}
 
-	searchURL := GOOGLE_IMAGE_API_URL
+	key, ok := j.keys["custom_search_api_key"]
+	if !ok {
+		j.log.Printf("error retrieving custom_search_api_key")
+		return
+	}
+	cx, ok := j.keys["custom_search_id"]
+	if !ok {
+		j.log.Printf("error retrieving custom_search_id")
+	}
+
+	searchURL := fmt.Sprintf(googleImageApiUrl, key, cx)
 	if msg.Sender.ID == YAO_YUJIAN_ID {
 		// @yyjhao loves spamming "Shawn Tan", replace it with his name in queries
 		// This will usually return an image of his magnificent face
 		rawQuery = dealWithYujian(rawQuery)
-		searchURL = GOOGLE_IMAGE_SAFE_API_URL
+		searchURL = fmt.Sprintf(googleImageSafeApiUrl, key, cx)
 	}
 	rawQuery = strings.TrimSpace(rawQuery)
 	q := url.QueryEscape(rawQuery)
@@ -66,9 +77,7 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 	}
 
 	searchRes := struct {
-		ResponseData struct {
-			Results []imgResult `json:"results"`
-		} `json:"responseData"`
+		Items []imgResult `json:"items"`
 	}{}
 	err = json.Unmarshal(jsonBody, &searchRes)
 	if err != nil {
@@ -76,10 +85,10 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 		return
 	}
 
-	if len(searchRes.ResponseData.Results) > 0 {
+	if len(searchRes.Items) > 0 {
 		// Randomly select an image
-		n := rand.Intn(len(searchRes.ResponseData.Results))
-		r := searchRes.ResponseData.Results[n]
+		n := rand.Intn(len(searchRes.Items))
+		r := searchRes.Items[n]
 		u, err := r.imgUrl()
 		j.log.Printf("[%s] img url: %s", time.Now().Format(time.RFC3339), u.String())
 		if err != nil {
@@ -94,18 +103,15 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 }
 
 type imgResult struct {
-	UnescapedURL string `json:"unescapedUrl"`
-	URL          string `json:"url"`
-	Width        string `json:"width"`
-	Height       string `json:"height"`
+	URL   string `json:"link"`
+	Image struct {
+		Width  int `json:"width"`
+		Height int `json:"height"`
+	} `json:"image"`
 }
 
 func (i *imgResult) imgUrl() (*url.URL, error) {
-	if i.UnescapedURL != "" {
-		return url.Parse(i.UnescapedURL)
-	} else {
-		return url.Parse(i.URL)
-	}
+	return url.Parse(i.URL)
 }
 
 // For Yujian

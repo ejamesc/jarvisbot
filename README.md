@@ -49,6 +49,8 @@ in your config.json:
 * open_exchange_api_key: An API key from https://openexchangerates.org/
 * youtube_api_key: A Google API key with Youtube enabled.
 * maps_api_key: A Google API key with Maps enabled.
+* custom_search_id: A Google Custom Search id, which has to be created at https://cse.google.com/cse/.
+* custom_search_api_key: A Google API key with custom search enabled.
 
 Last, but not least, make sure the user running the program has write permissions to its directory, 
 as Jarvis creates a jarvis.db file.
