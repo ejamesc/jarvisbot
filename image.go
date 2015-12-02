@@ -98,7 +98,17 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 
 		j.sendPhotoFromURL(u, msg)
 	} else {
-		j.SendMessage(msg.Chat, "My image search returned nothing. \U0001F622", &telebot.SendOptions{ReplyTo: *msg.Message})
+		var errorRes struct {
+			Error struct {
+				Code int `json:"code"`
+			} `json:"error"`
+		}
+		err = json.Unmarshal(jsonBody, &errorRes)
+		if err == nil && errorRes.Error.Code == 403 {
+			j.SendMessage(msg.Chat, "Sorry about this! I've hit my Google Custom Search API limits. \U0001F62D My creator is working on this issue here: https://github.com/ejamesc/jarvisbot/issues/21", &telebot.SendOptions{ReplyTo: *msg.Message})
+		} else {
+			j.SendMessage(msg.Chat, "My image search returned nothing. \U0001F622", &telebot.SendOptions{ReplyTo: *msg.Message})
+		}
 	}
 }
 
