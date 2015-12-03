@@ -26,7 +26,10 @@ func main() {
 	}
 
 	var config map[string]string
-	json.Unmarshal(configJSON, &config)
+	err = json.Unmarshal(configJSON, &config)
+	if err != nil {
+		log.Fatalf("failed to parse config.json: %s", err)
+	}
 
 	telegramAPIKey, ok := config["telegram_api_key"]
 	if !ok {
