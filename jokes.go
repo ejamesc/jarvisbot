@@ -76,7 +76,7 @@ func (j *JarvisBot) sendFileWrapper(assetName string, filetype string) (Response
 	}
 
 	_, filename := path.Split(assetName)
-	filePath := path.Join(pwd, TEMPDIR, filename)
+	filePath := path.Join(pwd, tempDir, filename)
 	// Check if file exists, if it doesn't exist, create it
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		fileData, err := Asset(assetName)

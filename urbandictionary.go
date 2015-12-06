@@ -11,7 +11,7 @@ import (
 	"github.com/tucnak/telebot"
 )
 
-const UD_SEARCH_ENDPOINT = "http://api.urbandictionary.com/v0/define?term=%s"
+const udSearchEndpoint = "http://api.urbandictionary.com/v0/define?term=%s"
 
 func (j *JarvisBot) UrbanDictSearch(msg *message) {
 	if len(msg.Args) == 0 {
@@ -27,7 +27,7 @@ func (j *JarvisBot) UrbanDictSearch(msg *message) {
 	rawQuery = strings.TrimSpace(rawQuery)
 	q := url.QueryEscape(rawQuery)
 
-	urlString := fmt.Sprintf(UD_SEARCH_ENDPOINT, q)
+	urlString := fmt.Sprintf(udSearchEndpoint, q)
 	resp, err := http.Get(urlString)
 	if err != nil {
 		j.log.Printf("failure retrieving videos from Urban Dictionary for query '%s': %s", q, err)

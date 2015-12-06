@@ -12,8 +12,8 @@ import (
 	"github.com/tucnak/telebot"
 )
 
-const YOUTUBE_SEARCH_ENDPOINT = "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=4&type=video&q=%s&key=%s"
-const YOUTUBE_VIDEO_BASE = "https://www.youtube.com/watch?v="
+const youtubeSearchEndpoint = "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=4&type=video&q=%s&key=%s"
+const youtubeVideoBaseURL = "https://www.youtube.com/watch?v="
 
 func (j *JarvisBot) YoutubeSearch(msg *message) {
 	if len(msg.Args) == 0 {
@@ -35,7 +35,7 @@ func (j *JarvisBot) YoutubeSearch(msg *message) {
 		return
 	}
 
-	urlString := fmt.Sprintf(YOUTUBE_SEARCH_ENDPOINT, q, key)
+	urlString := fmt.Sprintf(youtubeSearchEndpoint, q, key)
 	resp, err := http.Get(urlString)
 	if err != nil {
 		j.log.Printf("failure retrieving videos from Youtube for query '%s': %s", q, err)
@@ -69,7 +69,7 @@ func (j *JarvisBot) YoutubeSearch(msg *message) {
 	resMsg := ""
 	if len(searchRes.Items) > 0 {
 		for _, v := range searchRes.Items {
-			resMsg = resMsg + fmt.Sprintf("%s%s - %s\n", YOUTUBE_VIDEO_BASE, v.Id.VideoId, v.Snippet.Title)
+			resMsg = resMsg + fmt.Sprintf("%s%s - %s\n", youtubeVideoBaseURL, v.Id.VideoId, v.Snippet.Title)
 		}
 		j.SendMessage(msg.Chat, resMsg, nil)
 	} else {

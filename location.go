@@ -13,7 +13,7 @@ import (
 	"github.com/tucnak/telebot"
 )
 
-const PLACE_SEARCH_API = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=%s&key=%s"
+const placeSearchAPI = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=%s&key=%s"
 
 // LocationSearch takes a search string and returns a location.
 func (j *JarvisBot) LocationSearch(msg *message) {
@@ -36,7 +36,7 @@ func (j *JarvisBot) LocationSearch(msg *message) {
 		return
 	}
 
-	urlString := fmt.Sprintf(PLACE_SEARCH_API, q, key)
+	urlString := fmt.Sprintf(placeSearchAPI, q, key)
 	resp, err := http.Get(urlString)
 	if err != nil {
 		j.log.Printf("failure retrieving videos from Google Place Search for query '%s': %s", q, err)

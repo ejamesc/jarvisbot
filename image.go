@@ -22,10 +22,10 @@ import (
 const googleImageApiUrl = "https://www.googleapis.com/customsearch/v1?key=%s&cx=%s&searchType=image&q="
 const googleImageSafeApiUrl = "https://www.googleapis.com/customsearch/v1?key=%s&cx=%s&searchType=image&safe=high&q="
 
-const YAO_YUJIAN_ID = 36972523
+const yaoYujianID = 36972523
 
-var SHAWN_TAN_RE *regexp.Regexp
-var SHAWN_RE *regexp.Regexp
+var shawnTanRE *regexp.Regexp
+var shawnRE *regexp.Regexp
 var TAN_RE *regexp.Regexp
 
 func (j *JarvisBot) ImageSearch(msg *message) {
@@ -54,7 +54,7 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 	}
 
 	searchURL := fmt.Sprintf(googleImageApiUrl, key, cx)
-	if msg.Sender.ID == YAO_YUJIAN_ID {
+	if msg.Sender.ID == yaoYujianID {
 		// @yyjhao loves spamming "Shawn Tan", replace it with his name in queries
 		// This will usually return an image of his magnificent face
 		rawQuery = dealWithYujian(rawQuery)
@@ -126,8 +126,8 @@ func (i *imgResult) imgUrl() (*url.URL, error) {
 
 // For Yujian
 func init() {
-	SHAWN_TAN_RE = regexp.MustCompile("([Ss][Hh][Aa][Ww][Nn]).*([Tt][Aa][Nn])|([Tt][Aa][Nn]).*([Ss][Hh][Aa][Ww][Nn])")
-	SHAWN_RE = regexp.MustCompile("[Ss][Hh][Aa][Ww][Nn]")
+	shawnTanRE = regexp.MustCompile("([Ss][Hh][Aa][Ww][Nn]).*([Tt][Aa][Nn])|([Tt][Aa][Nn]).*([Ss][Hh][Aa][Ww][Nn])")
+	shawnRE = regexp.MustCompile("[Ss][Hh][Aa][Ww][Nn]")
 	TAN_RE = regexp.MustCompile("[Tt][Aa][Nn]")
 }
 
@@ -136,11 +136,11 @@ func dealWithYujian(rawQuery string) string {
 	t := runes.If(runes.In(unicode.Latin), width.Fold, nil)
 	rawQuery, _, _ = transform.String(t, rawQuery)
 
-	if SHAWN_TAN_RE.MatchString(rawQuery) {
-		rawQuery = SHAWN_RE.ReplaceAllLiteralString(rawQuery, "Yujian")
+	if shawnTanRE.MatchString(rawQuery) {
+		rawQuery = shawnRE.ReplaceAllLiteralString(rawQuery, "Yujian")
 		rawQuery = TAN_RE.ReplaceAllLiteralString(rawQuery, "Yao")
-	} else if tq := strings.Replace(rawQuery, " ", "", -1); SHAWN_TAN_RE.MatchString(tq) {
-		rawQuery = SHAWN_RE.ReplaceAllLiteralString(tq, "Yujian")
+	} else if tq := strings.Replace(rawQuery, " ", "", -1); shawnTanRE.MatchString(tq) {
+		rawQuery = shawnRE.ReplaceAllLiteralString(tq, "Yujian")
 		rawQuery = TAN_RE.ReplaceAllLiteralString(rawQuery, "Yao")
 	}
 

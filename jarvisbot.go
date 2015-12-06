@@ -83,7 +83,7 @@ func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, config map[string
 
 	// Ensure temp directory is created.
 	// This is used to store media temporarily.
-	tmpDirPath := filepath.Join(pwd, TEMPDIR)
+	tmpDirPath := filepath.Join(pwd, tempDir)
 	if _, err := os.Stat(tmpDirPath); os.IsNotExist(err) {
 		j.log.Printf("[%s] creating temporary directory", time.Now().Format(time.RFC3339))
 		mkErr := os.Mkdir(tmpDirPath, 0775)

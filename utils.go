@@ -16,7 +16,7 @@ import (
 	"github.com/tucnak/telebot"
 )
 
-const TEMPDIR = "temp"
+const tempDir = "temp"
 
 func extFromContentType(ct string) string {
 	switch ct {
@@ -76,7 +76,7 @@ func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 
 	// Test if temporary directory exists
 	// If it doesn't exist, create it.
-	tmpDirPath := filepath.Join(pwd, TEMPDIR)
+	tmpDirPath := filepath.Join(pwd, tempDir)
 	if _, err := os.Stat(tmpDirPath); os.IsNotExist(err) {
 		j.log.Printf("[%s] creating temporary directory", time.Now().Format(time.RFC3339))
 		mkErr := os.Mkdir(tmpDirPath, 0775)

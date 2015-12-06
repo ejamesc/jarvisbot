@@ -14,8 +14,8 @@ import (
 	"github.com/tucnak/telebot"
 )
 
-const GIPHY_API_URL = "http://api.giphy.com/v1/gifs/search?q="
-const GIPHY_PUBLIC_BETA_KEY = "dc6zaTOxFJmzC"
+const giphyURL = "http://api.giphy.com/v1/gifs/search?q="
+const giphyPublicBetaKey = "dc6zaTOxFJmzC"
 
 func (j *JarvisBot) GifSearch(msg *message) {
 	if len(msg.Args) == 0 {
@@ -38,9 +38,9 @@ func (j *JarvisBot) GifSearch(msg *message) {
 	if j.keys["giphy_api_key"] != "" {
 		key = j.keys["giphy_api_key"]
 	} else {
-		key = GIPHY_PUBLIC_BETA_KEY
+		key = giphyPublicBetaKey
 	}
-	resp, err := http.Get(GIPHY_API_URL + q + "&api_key=" + key)
+	resp, err := http.Get(giphyURL + q + "&api_key=" + key)
 	if err != nil {
 		j.log.Printf("failure retrieving images from Giphy for query '%s': %s", q, err)
 		return

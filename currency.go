@@ -13,7 +13,7 @@ import (
 	"github.com/tucnak/telebot"
 )
 
-const ENDPOINT = "https://openexchangerates.org/api/latest.json?app_id="
+const openExchangeRateURL = "https://openexchangerates.org/api/latest.json?app_id="
 
 // Exchange is used to perform an exchange rate conversion.
 func (j *JarvisBot) Exchange(msg *message) {
@@ -131,7 +131,7 @@ func (j *JarvisBot) RetrieveExchangeRates() (*Rates, error) {
 		err := fmt.Errorf("no open exchange api key!")
 		return nil, err
 	}
-	resp, err := http.Get(ENDPOINT + j.keys["open_exchange_api_key"])
+	resp, err := http.Get(openExchangeRateURL + j.keys["open_exchange_api_key"])
 	if err != nil {
 		return nil, err
 	}

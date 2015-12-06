@@ -11,7 +11,7 @@ import (
 	"github.com/tucnak/telebot"
 )
 
-const GOOGLE_SEARCH_API = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q="
+const googleSearchAPI = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q="
 
 func (j *JarvisBot) GoogleSearch(msg *message) {
 	if len(msg.Args) == 0 {
@@ -28,7 +28,7 @@ func (j *JarvisBot) GoogleSearch(msg *message) {
 	rawQuery = strings.TrimSpace(rawQuery)
 	q := url.QueryEscape(rawQuery)
 
-	resp, err := http.Get(GOOGLE_SEARCH_API + q)
+	resp, err := http.Get(googleSearchAPI + q)
 	if err != nil {
 		j.log.Printf("failure retrieving search results from Google for query '%s': %s", q, err)
 		return

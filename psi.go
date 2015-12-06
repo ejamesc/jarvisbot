@@ -12,12 +12,12 @@ import (
 	"github.com/tucnak/telebot"
 )
 
-const SGP_URL = "http://sgp.si/now.json"
+const sgpURL = "http://sgp.si/now.json"
 
 func (j *JarvisBot) PSI(msg *message) {
 	j.bot.SendChatAction(msg.Chat, telebot.Typing)
 
-	resp, err := http.Get(SGP_URL)
+	resp, err := http.Get(sgpURL)
 	if err != nil {
 		j.log.Printf("[%s] error retrieving PSI: %s", time.Now().Format(time.RFC3339), err)
 		return
