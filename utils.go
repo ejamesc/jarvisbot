@@ -34,10 +34,10 @@ func extFromContentType(ct string) string {
 
 func contentType(u *url.URL) string {
 	resp, err := http.Head(u.String())
-	defer resp.Body.Close()
 	if err != nil {
 		return "application/octet-stream"
 	}
+	defer resp.Body.Close()
 	return resp.Header.Get("Content-Type")
 }
 
