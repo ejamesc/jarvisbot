@@ -11,7 +11,7 @@ import (
 	"github.com/tucnak/telebot"
 )
 
-const googleSearchAPI = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q="
+const googleSearchAPI = "https://www.googleapis.com/customsearch/v1?key=%s&cx=%s&q="
 
 func (j *JarvisBot) GoogleSearch(msg *message) {
 	if len(msg.Args) == 0 {
@@ -25,10 +25,22 @@ func (j *JarvisBot) GoogleSearch(msg *message) {
 	for _, v := range msg.Args {
 		rawQuery = rawQuery + v + " "
 	}
+
+	key, ok := j.keys["custom_search_api_key"]
+	if !ok {
+		j.log.Printf("error retrieving custom_search_api_key")
+		return
+	}
+	cx, ok := j.keys["custom_search_id"]
+	if !ok {
+		j.log.Printf("error retrieving custom_search_id")
+	}
+
+	searchURL := fmt.Sprintf(googleSearchAPI, key, cx)
 	rawQuery = strings.TrimSpace(rawQuery)
 	q := url.QueryEscape(rawQuery)
 
-	resp, err := http.Get(googleSearchAPI + q)
+	resp, err := http.Get(searchURL + q)
 	if err != nil {
 		j.log.Printf("failure retrieving search results from Google for query '%s': %s", q, err)
 		return
@@ -42,11 +54,8 @@ func (j *JarvisBot) GoogleSearch(msg *message) {
 	}
 
 	searchRes := struct {
-		ResponseData struct {
-			Results []searchResult `json:"results"`
-		} `json:"responseData"`
+		Items []searchResult `json:"items"`
 	}{}
-
 	err = json.Unmarshal(jsonBody, &searchRes)
 	if err != nil {
 		j.log.Printf("failure unmarshalling json for search query '%s': %s", q, err)
@@ -54,8 +63,8 @@ func (j *JarvisBot) GoogleSearch(msg *message) {
 	}
 
 	resMsg := ""
-	if len(searchRes.ResponseData.Results) > 0 {
-		for _, v := range searchRes.ResponseData.Results {
+	if len(searchRes.Items) > 0 {
+		for _, v := range searchRes.Items {
 			u, err := v.getUrl()
 			if err == nil {
 				resMsg = resMsg + fmt.Sprintf("%s - %s\n", u, v.Title)
@@ -64,20 +73,27 @@ func (j *JarvisBot) GoogleSearch(msg *message) {
 			}
 		}
 		j.SendMessage(msg.Chat, resMsg, nil)
+	} else {
+		var errorRes struct {
+			Error struct {
+				Code int `json:"code"`
+			} `json:"error"`
+		}
+		err = json.Unmarshal(jsonBody, &errorRes)
+		if err == nil && errorRes.Error.Code == 403 {
+			j.SendMessage(msg.Chat, "Sorry about this! I've hit my Google Custom Search API limits. \U0001F62D My creator is working on this issue here: https://github.com/ejamesc/jarvisbot/issues/21", &telebot.SendOptions{ReplyTo: *msg.Message})
+		} else {
+			j.SendMessage(msg.Chat, "My search returned nothing. \U0001F622", &telebot.SendOptions{ReplyTo: *msg.Message})
+		}
 	}
 
 }
 
 type searchResult struct {
-	Title        string `json:"titleNoFormatting"`
-	UnescapedURL string `json:"unescapedUrl"`
-	URL          string `json:"url"`
+	Title string `json:"title"`
+	URL   string `json:"link"`
 }
 
 func (s *searchResult) getUrl() (*url.URL, error) {
-	if s.UnescapedURL != "" {
-		return url.Parse(s.UnescapedURL)
-	} else {
-		return url.Parse(s.URL)
-	}
+	return url.Parse(s.URL)
 }
