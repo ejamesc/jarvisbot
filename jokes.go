@@ -52,6 +52,18 @@ func (j *JarvisBot) Hanar(msg *message) {
 	fn(msg)
 }
 
+// TellThatTo returns a picture of Kanjiklub
+func (j *JarvisBot) TellThatTo(msg *message) {
+	j.bot.SendChatAction(msg.Chat, telebot.UploadingPhoto)
+
+	fn, err := j.sendFileWrapper("data/kanjiklub.jpg", "photo")
+	if err != nil {
+		j.log.Printf("error sending file: %s", err)
+		return
+	}
+	fn(msg)
+}
+
 // Touch allows Jarvis to be touched. Thx, @rahulg
 func (j *JarvisBot) Touch(msg *message) {
 	messages := []string{
