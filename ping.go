@@ -88,7 +88,7 @@ func (j *JarvisBot) Ping(msg *message) {
 
 // saveUserToDB saves the given user to the given chat bucket in Bolt.
 func (j *JarvisBot) saveUserToDB(chat *telebot.Chat, sender *telebot.User) error {
-	groupID, userID, username := strconv.Itoa(chat.ID), strconv.Itoa(sender.ID), sender.Username
+	groupID, userID, username := strconv.Itoa(int(chat.ID)), strconv.Itoa(sender.ID), sender.Username
 	if sender.Username == "" {
 		return fmt.Errorf("user has no username!")
 	}
@@ -137,7 +137,7 @@ func (j *JarvisBot) usernameExistsForChat(chat *telebot.Chat, sender *telebot.Us
 		return true
 	}
 
-	groupID, senderID, username := strconv.Itoa(chat.ID), strconv.Itoa(sender.ID), sender.Username
+	groupID, senderID, username := strconv.Itoa(int(chat.ID)), strconv.Itoa(sender.ID), sender.Username
 
 	j.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket(group_usernames_bucket_name)
@@ -160,7 +160,7 @@ func (j *JarvisBot) usernameExistsForChat(chat *telebot.Chat, sender *telebot.Us
 
 // getAllUsernamesForChat returns all usernames for a chat, sans the sender's.
 func (j *JarvisBot) getAllUsernamesForChat(chat *telebot.Chat, sender *telebot.User) (string, error) {
-	uArray, groupID, senderID := []string{}, strconv.Itoa(chat.ID), strconv.Itoa(sender.ID)
+	uArray, groupID, senderID := []string{}, strconv.Itoa(int(chat.ID)), strconv.Itoa(sender.ID)
 
 	if !chat.IsGroupChat() {
 		return "", fmt.Errorf("chat %s is not a group chat!", groupID)
@@ -196,7 +196,7 @@ func (j *JarvisBot) getAllUsernamesForChat(chat *telebot.Chat, sender *telebot.U
 
 // Check if a bucket for the group chat already exists.
 func (j *JarvisBot) groupBucketExists(chat *telebot.Chat) bool {
-	res, groupID := false, strconv.Itoa(chat.ID)
+	res, groupID := false, strconv.Itoa(int(chat.ID))
 
 	j.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket(group_usernames_bucket_name)
@@ -214,7 +214,7 @@ func (j *JarvisBot) groupBucketExists(chat *telebot.Chat) bool {
 // We limit pings per group chat to rateLimit every hour.
 func (j *JarvisBot) canSendWithinTimeLimit(chat *telebot.Chat) bool {
 	res := false
-	groupID := strconv.Itoa(chat.ID)
+	groupID := strconv.Itoa(int(chat.ID))
 
 	err := j.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket(group_usernames_bucket_name)
@@ -262,7 +262,7 @@ func (j *JarvisBot) updateLastSentTime(chat *telebot.Chat) error {
 		return fmt.Errorf("chat is not a group chat!")
 	}
 
-	groupID := strconv.Itoa(chat.ID)
+	groupID := strconv.Itoa(int(chat.ID))
 	err := j.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket(group_usernames_bucket_name)
 		gb := b.Bucket([]byte(groupID))

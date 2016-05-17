@@ -102,6 +102,7 @@ func (j *JarvisBot) getDefaultFuncMap() FuncMap {
 		"/help":      j.Help,
 		"/hello":     j.SayHello,
 		"/echo":      j.Echo,
+		"/e":         j.Echo,
 		"/xchg":      j.Exchange,
 		"/x":         j.Exchange,
 		"/clear":     j.Clear,

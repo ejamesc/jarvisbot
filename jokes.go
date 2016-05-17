@@ -64,8 +64,7 @@ func (j *JarvisBot) Touch(msg *message) {
 		"Noice!\nhttps://www.youtube.com/watch?v=rQnYi3z56RE",
 	}
 	n := rand.Intn(len(messages))
-	so := &telebot.SendOptions{ParseMode: telebot.ModeMarkdown}
-	j.SendMessage(msg.Chat, messages[n], so)
+	j.SendMessage(msg.Chat, messages[n], nil)
 }
 
 // sendFileWrapper checks if the file exists and writes it before returning the response function.
@@ -101,7 +100,11 @@ func (j *JarvisBot) sendFileWrapper(assetName string, filetype string) (Response
 		if filetype == "ogg" {
 			j.bot.SendAudio(msg.Chat, &telebot.Audio{File: file, Mime: "audio/ogg"}, nil)
 		} else if filetype == "photo" {
-			j.bot.SendPhoto(msg.Chat, &telebot.Photo{Thumbnail: telebot.Thumbnail{File: file}}, nil)
+			j.bot.SendPhoto(msg.Chat, &telebot.Photo{File: file, Thumbnail: telebot.Thumbnail{File: file}}, nil)
+		} else if filetype == "gif" {
+			doc := &telebot.Document{File: file, Preview: telebot.Thumbnail{File: file}, Mime: "image/gif"}
+			j.bot.SendDocument(msg.Chat, doc, nil)
+
 		}
 	}, nil
 }
