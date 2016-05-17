@@ -1,39 +1,45 @@
 {
 	"ImportPath": "github.com/ejamesc/jarvisbot",
-	"GoVersion": "go1.5",
+	"GoVersion": "go1.6",
+	"GodepVersion": "v62",
 	"Packages": [
 		"./..."
 	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/boltdb/bolt",
-			"Comment": "v1.0-119-g90fef38",
-			"Rev": "90fef389f98027ca55594edd7dbd6e7f3926fdad"
+			"Comment": "v1.2.0-13-g144418e",
+			"Rev": "144418e1475d8bf7abbdc48583500f1a20c62ea7"
 		},
 		{
 			"ImportPath": "github.com/kardianos/osext",
-			"Rev": "6e7f843663477789fac7c02def0d0909e969b4e5"
+			"Rev": "29ae4ffbc9a6fe9fb2bc5029050ce6996ea1d3bc"
 		},
 		{
 			"ImportPath": "github.com/satori/go.uuid",
-			"Rev": "6b8e5b55d20d01ad47ecfe98e5171688397c61e9"
+			"Comment": "v1.0.0",
+			"Rev": "f9ab0dce87d815821e221626b772e3475a0d2749"
 		},
 		{
 			"ImportPath": "github.com/tucnak/telebot",
-			"Comment": "v1.0-9-g5db9cc7",
-			"Rev": "5db9cc7c56d68112e1735db1346e28aa4841d736"
+			"Comment": "v1.0-44-g68ad7fd",
+			"Rev": "68ad7fd5dcdbfdc4f6513e0195ad6edb2c3e0573"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "d4feaf1a7e61e1d9e79e6c4e76c6349e9cab0a03"
 		},
 		{
 			"ImportPath": "golang.org/x/text/runes",
-			"Rev": "3eb7007b740b66a77f3c85f2660a0240b284115a"
+			"Rev": "02704b6b714738b763ba478766eb55a4b4851cd4"
 		},
 		{
 			"ImportPath": "golang.org/x/text/transform",
-			"Rev": "3eb7007b740b66a77f3c85f2660a0240b284115a"
+			"Rev": "02704b6b714738b763ba478766eb55a4b4851cd4"
 		},
 		{
 			"ImportPath": "golang.org/x/text/width",
-			"Rev": "3eb7007b740b66a77f3c85f2660a0240b284115a"
+			"Rev": "02704b6b714738b763ba478766eb55a4b4851cd4"
 		}
 	]
 }

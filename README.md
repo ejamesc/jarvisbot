@@ -31,7 +31,8 @@ install the go-bindata tool using:
 ```go get -u github.com/jteeuwen/go-bindata/... ```
 
 If you're running a Go version < 1.4, you'll need to manually run the following
-command in the top level dir. (Otherwise, you can run `go generate` to achieve
+command in the top level dir. (Otherwise, you can run `go generate
+github.com/ejamesc/jarvisbot/cmd/jarvisbot` to achieve
 the same results).
 
 ```go-bindata -pkg jarvisbot -o assets.go data/```
