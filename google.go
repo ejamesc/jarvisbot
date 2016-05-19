@@ -26,14 +26,22 @@ func (j *JarvisBot) GoogleSearch(msg *message) {
 		rawQuery = rawQuery + v + " "
 	}
 
-	key, ok := j.keys["custom_search_api_key"]
-	if !ok {
-		j.log.Printf("error retrieving custom_search_api_key")
-		return
-	}
-	cx, ok := j.keys["custom_search_id"]
-	if !ok {
-		j.log.Printf("error retrieving custom_search_id")
+	var key, cx string
+	ok := true
+	key, ok = j.keys["custom_search_api_key"]
+	if !ok || key == "" {
+		tmp := <-j.googleKeyChan
+		key, cx = processKeyFromChan(tmp)
+		if key == "" || cx == "" {
+			j.log.Printf("error retrieving key from chan")
+			return
+		}
+	} else {
+		cx, ok = j.keys["custom_search_id"]
+		if !ok {
+			j.log.Printf("error retrieving custom_search_id")
+			return
+		}
 	}
 
 	searchURL := fmt.Sprintf(googleSearchAPI, key, cx)

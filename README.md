@@ -51,6 +51,19 @@ in your config.json:
 * youtube_api_key: A Google API key with Youtube enabled.
 * maps_api_key: A Google API key with Maps enabled.
 * custom_search_id: A Google Custom Search id, which has to be created at https://cse.google.com/cse/ according to these instructions: http://stackoverflow.com/a/11206266
+
+New: you may now choose to use one custom_search_api_key, or use key cycling.
+To use key cycling, add any number of additional Google API keys with custom
+search enabled to config.json, with the following key schema:
+
+* google_api_key_1
+* google_api_key_2
+* google_search_id_1
+* google_search_id_2
+
+... and so on. You'll need to use multiple Google accounts to create API
+keys as well as corresponding custom search engines using these [instructions](http://stackoverflow.com/a/11206266). If this sounds like a hack, that's because it *totally is*. Or, stick to the old way and use just one key:
+
 * custom_search_api_key: A Google API key with custom search enabled.
 
 Last, but not least, make sure the user running the program has write permissions to its directory, 

@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/boltdb/bolt"
@@ -30,6 +31,15 @@ func extFromContentType(ct string) string {
 		// not an image
 		return ""
 	}
+}
+
+func processKeyFromChan(input string) (key string, id string) {
+	ks := strings.Split(input, " ")
+	key, id = "", ""
+	if len(ks) >= 2 {
+		key, id = ks[0], ks[1]
+	}
+	return
 }
 
 func contentType(u *url.URL) string {

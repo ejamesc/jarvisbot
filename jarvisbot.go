@@ -24,12 +24,13 @@ var group_usernames_bucket_name = []byte("groups")
 
 // JarvisBot is the main struct. All response funcs bind to this.
 type JarvisBot struct {
-	Name string // The name of the bot registered with Botfather
-	bot  *telebot.Bot
-	log  *log.Logger
-	fmap FuncMap
-	db   *bolt.DB
-	keys map[string]string
+	Name          string // The name of the bot registered with Botfather
+	bot           *telebot.Bot
+	log           *log.Logger
+	fmap          FuncMap
+	db            *bolt.DB
+	keys          map[string]string
+	googleKeyChan chan string
 }
 
 // Wrapper struct for a message
@@ -63,7 +64,9 @@ func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, config map[string
 	if lg == nil {
 		lg = log.New(os.Stdout, "[jarvis] ", 0)
 	}
-	j := &JarvisBot{Name: name, bot: bot, log: lg, keys: config}
+
+	keyChannel := make(chan string)
+	j := &JarvisBot{Name: name, bot: bot, log: lg, keys: config, googleKeyChan: keyChannel}
 
 	j.fmap = j.getDefaultFuncMap()
 
@@ -92,7 +95,50 @@ func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, config map[string
 		}
 	}
 
+	// We loop through all the googleKeys and shove them into a channel
+	// This is a fucking hack. I know. LOL.
+	j.GoSafely(func() {
+		googleKeys := getGoogleKeys(j.keys)
+		if len(googleKeys) < 1 {
+			return
+		}
+
+		count := 0
+		for {
+			j.googleKeyChan <- googleKeys[count].toString()
+			count++
+			if count >= len(googleKeys) {
+				count = 0
+			}
+		}
+	})
+
 	return j
+}
+
+type googleKeyPair struct {
+	SearchID string
+	APIKey   string
+}
+
+func (g googleKeyPair) toString() string {
+	return fmt.Sprintf("%s %s", g.APIKey, g.SearchID)
+}
+
+func getGoogleKeys(keys map[string]string) []googleKeyPair {
+	res := []googleKeyPair{}
+	for k, v := range keys {
+		if strings.Contains(strings.ToLower(k), "google_api_key") {
+			id := k[len(k)-1:]
+			searchID, ok := keys["google_search_id_"+id]
+			if !ok {
+				continue
+			}
+			res = append(res, googleKeyPair{SearchID: searchID, APIKey: v})
+		}
+	}
+
+	return res
 }
 
 // Get the built-in, default FuncMap.
