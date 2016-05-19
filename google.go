@@ -64,12 +64,17 @@ func (j *JarvisBot) GoogleSearch(msg *message) {
 
 	resMsg := ""
 	if len(searchRes.Items) > 0 {
+		count := 0
 		for _, v := range searchRes.Items {
 			u, err := v.getUrl()
 			if err == nil {
 				resMsg = resMsg + fmt.Sprintf("%s - %s\n", u, v.Title)
 			} else {
 				continue
+			}
+			count++
+			if count >= 5 {
+				break
 			}
 		}
 		j.SendMessage(msg.Chat, resMsg, nil)
