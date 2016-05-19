@@ -58,6 +58,7 @@ func main() {
 	jb.AddFunction("/kanjiklub", jb.TellThatTo)
 	jb.AddFunction("/ducks", jb.SendImage("quack quack motherfucker"))
 	jb.AddFunction("/chickens", jb.SendImage("cluck cluck motherfucker"))
+	jb.AddFunction("/yank", jb.Yank)
 
 	jb.GoSafely(func() {
 		logger.Println("Scheduling exchange rate update")

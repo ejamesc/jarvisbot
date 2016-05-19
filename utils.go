@@ -99,6 +99,7 @@ func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 			j.log.Printf("error closing file: %s", err)
 		}
 		err = os.Remove(imgFilePath)
+		fmt.Printf("Removed %s\n", imgFilePath)
 		if err != nil {
 			j.log.Printf("error removing %s: %s", imgFilePath, err)
 		}
@@ -110,6 +111,8 @@ func (j *JarvisBot) sendPhotoFromURL(url *url.URL, msg *message) {
 		j.log.Printf("error writing request body to file: %s", err)
 		return
 	}
+
+	fmt.Println(imgFilePath)
 
 	tFile, err := telebot.NewFile(imgFilePath)
 	if err != nil {

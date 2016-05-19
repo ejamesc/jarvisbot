@@ -37,6 +37,18 @@ func (j *JarvisBot) NeverForget(msg *message) {
 	fn(msg)
 }
 
+// Yank sends a gif of @burnflare yanking @jellykaya off the stage of Hack&Roll 2016
+func (j *JarvisBot) Yank(msg *message) {
+	j.bot.SendChatAction(msg.Chat, telebot.UploadingPhoto)
+
+	fn, err := j.sendFileWrapper("data/yank.gif", "gif")
+	if err != nil {
+		j.log.Printf("error sending file: %s", err)
+		return
+	}
+	fn(msg)
+}
+
 // Hanar returns a picture of a Hanar. Thx, @shawntan
 // Context: 'hanar, hanar, hanar' means 'yeah I get it, stop nagging'
 // in Singaporean Hokkien. The picture sent is a picture of a creature in
