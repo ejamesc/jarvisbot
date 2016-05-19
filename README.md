@@ -44,27 +44,27 @@ In the same directory as the binary, create a config.json file. (A
 config-sample.json has been provided for you to modify.) Remember to include the API keys
 in your config.json:
 
-* name: Your bot's @username - this is currently unused, but may be used in the
+* `name`: Your bot's @username - this is currently unused, but may be used in the
   future for @replies to your bot.
-* telegram_api_key: Your bot's Telegram bot api key, from Botfather.
-* open_exchange_api_key: An API key from https://openexchangerates.org/
-* youtube_api_key: A Google API key with Youtube enabled.
-* maps_api_key: A Google API key with Maps enabled.
-* custom_search_id: A Google Custom Search id, which has to be created at https://cse.google.com/cse/ according to these instructions: http://stackoverflow.com/a/11206266
+* `telegram_api_key`: Your bot's Telegram bot api key, from Botfather.
+* `open_exchange_api_key`: An API key from https://openexchangerates.org/
+* `youtube_api_key`: A Google API key with Youtube enabled.
+* `maps_api_key`: A Google API key with Maps enabled.
 
 New: you may now choose to use one custom_search_api_key, or use key cycling.
 To use key cycling, add any number of additional Google API keys with custom
 search enabled to config.json, with the following key schema:
 
-* google_api_key_1
-* google_api_key_2
-* google_search_id_1
-* google_search_id_2
+* `google_api_key_1`
+* `google_search_id_1`
+* `google_api_key_2`
+* `google_search_id_2`
 
 ... and so on. You'll need to use multiple Google accounts to create API
 keys as well as corresponding custom search engines using these [instructions](http://stackoverflow.com/a/11206266). If this sounds like a hack, that's because it *totally is*. Or, stick to the old way and use just one key:
 
-* custom_search_api_key: A Google API key with custom search enabled.
+* `custom_search_api_key`: A Google API key with custom search enabled.
+* `custom_search_id`: A Google Custom Search id, which has to be created at https://cse.google.com/cse/ according to these instructions: http://stackoverflow.com/a/11206266
 
 Last, but not least, make sure the user running the program has write permissions to its directory, 
 as Jarvis creates a jarvis.db file.
