@@ -29,8 +29,8 @@ func (j *JarvisBot) YoutubeSearch(msg *message) {
 	rawQuery = strings.TrimSpace(rawQuery)
 	q := url.QueryEscape(rawQuery)
 
-	key, ok := j.keys["youtube_api_key"]
-	if !ok {
+	key := j.keys.YoutubeAPIKey
+	if key == "" {
 		j.log.Printf("[%s] tried to do a video search, but no Youtube api key!", time.Now().Format(time.RFC3339))
 		return
 	}

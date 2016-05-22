@@ -7,8 +7,5 @@
   "custom_search_id": "",
   "custom_search_api_key": "",
 
-  "google_search_id_1": "",
-  "google_search_id_2": "",
-  "google_api_key_1": "",
-  "google_api_key_2": ""
+  "custom_search_credentials": [{"api_key": "", "search_id": ""}]
 }

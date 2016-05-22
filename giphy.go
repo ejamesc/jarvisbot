@@ -35,8 +35,8 @@ func (j *JarvisBot) GifSearch(msg *message) {
 	q := url.QueryEscape(rawQuery)
 
 	key := ""
-	if j.keys["giphy_api_key"] != "" {
-		key = j.keys["giphy_api_key"]
+	if j.keys.GiphyAPIKey != "" {
+		key = j.keys.GiphyAPIKey
 	} else {
 		key = giphyPublicBetaKey
 	}

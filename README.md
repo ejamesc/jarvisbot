@@ -31,11 +31,12 @@ install the go-bindata tool using:
 ```go get -u github.com/jteeuwen/go-bindata/... ```
 
 If you're running a Go version < 1.4, you'll need to manually run the following
-command in the top level dir. (Otherwise, you can run `go generate
-github.com/ejamesc/jarvisbot/cmd/jarvisbot` to achieve
-the same results).
+command in the top level dir. 
 
 ```go-bindata -pkg jarvisbot -o assets.go data/```
+
+(Otherwise, you can run `go generate` to achieve the same results).
+
 
 ## Instructions 
 Compile Jarvis for your target platform and upload the binary to your server. 
@@ -51,17 +52,15 @@ in your config.json:
 * `youtube_api_key`: A Google API key with Youtube enabled.
 * `maps_api_key`: A Google API key with Maps enabled.
 
-New: you may now choose to use one custom_search_api_key, or use key cycling.
-To use key cycling, add any number of additional Google API keys with custom
-search enabled to config.json, with the following key schema:
+**New**: you may now choose to use one `custom_search_api_key`, or use key cycling
+to get around Google custom search's 100 searches per day limit.
+To use key cycling, add any number of additional Google API key and Google
+custom search engine id pairs to config.json, with the following key schema:
 
-* `google_api_key_1`
-* `google_search_id_1`
-* `google_api_key_2`
-* `google_search_id_2`
+* `"custom_search_credentials": [{"api_key": "x", "search_id": "y"}]`
 
-... and so on. You'll need to use multiple Google accounts to create API
-keys as well as corresponding custom search engines using these [instructions](http://stackoverflow.com/a/11206266). If this sounds like a hack, that's because it *totally is*. Or, stick to the old way and use just one key:
+... and so on, where `api_key` is a Google API key with custom search enabled,
+and `search_id` is a Google custom search engine id. You'll need to use multiple Google accounts to create these key pairs, using these [instructions](http://stackoverflow.com/a/11206266). If this sounds like a hack, that's because it *totally is*. Or, stick to the old way and use just one key pair:
 
 * `custom_search_api_key`: A Google API key with custom search enabled.
 * `custom_search_id`: A Google Custom Search id, which has to be created at https://cse.google.com/cse/ according to these instructions: http://stackoverflow.com/a/11206266

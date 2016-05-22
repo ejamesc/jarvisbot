@@ -30,8 +30,8 @@ func (j *JarvisBot) LocationSearch(msg *message) {
 	rawQuery = strings.TrimSpace(rawQuery)
 	q := url.QueryEscape(rawQuery)
 
-	key, ok := j.keys["maps_api_key"]
-	if !ok {
+	key := j.keys.MapsAPIKey
+	if key == "" {
 		j.log.Printf("[%s] tried to do a location search, but no Google api key!", time.Now().Format(time.RFC3339))
 		return
 	}

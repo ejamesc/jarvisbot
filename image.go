@@ -44,9 +44,8 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 	}
 
 	var key, cx string
-	ok := true
-	key, ok = j.keys["custom_search_api_key"]
-	if !ok || key == "" {
+	key = j.keys.CustomSearchAPIKey
+	if key == "" {
 		tmp := <-j.googleKeyChan
 		key, cx = processKeyFromChan(tmp)
 		if key == "" || cx == "" {
@@ -54,8 +53,8 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 			return
 		}
 	} else {
-		cx, ok = j.keys["custom_search_id"]
-		if !ok {
+		cx = j.keys.CustomSearchID
+		if cx == "" {
 			j.log.Printf("error retrieving custom_search_id")
 			return
 		}
@@ -113,7 +112,8 @@ func (j *JarvisBot) ImageSearch(msg *message) {
 		}
 		err = json.Unmarshal(jsonBody, &errorRes)
 		if err == nil && errorRes.Error.Code == 403 {
-			j.SendMessage(msg.Chat, "Sorry about this! I've hit my Google Custom Search API limits. \U0001F62D My creator is working on this issue here: https://github.com/ejamesc/jarvisbot/issues/21", &telebot.SendOptions{ReplyTo: *msg.Message})
+			j.SendMessage(msg.Chat, "Hmm, something went wrong", &telebot.SendOptions{ReplyTo: *msg.Message})
+			j.log.Printf("[Google search limit] Search limit hit for key %s, with id %s", key, cx)
 		} else {
 			j.SendMessage(msg.Chat, "My image search returned nothing. \U0001F622", &telebot.SendOptions{ReplyTo: *msg.Message})
 		}

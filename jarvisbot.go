@@ -3,6 +3,7 @@ package jarvisbot
 //go:generate go-bindata -pkg $GOPACKAGE -o assets.go data/
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"math/rand"
@@ -29,8 +30,21 @@ type JarvisBot struct {
 	log           *log.Logger
 	fmap          FuncMap
 	db            *bolt.DB
-	keys          map[string]string
+	keys          config
 	googleKeyChan chan string
+}
+
+// Configuration struct for setting up Jarvis
+type config struct {
+	Name               string          `json:"name"`
+	TelegramAPIKey     string          `json:"telegram_api_key"`
+	OpenExchangeAPIKey string          `json:"open_exchange_api_key"`
+	GiphyAPIKey        string          `json:"giphy_api_key"`
+	YoutubeAPIKey      string          `json:"youtube_api_key"`
+	MapsAPIKey         string          `json:"maps_api_key"`
+	CustomSearchAPIKey string          `json:"custom_search_api_key"`
+	CustomSearchID     string          `json:"custom_search_id"`
+	SearchKeys         []googleKeyPair `json:"custom_search_credentials"`
 }
 
 // Wrapper struct for a message
@@ -49,15 +63,27 @@ func (m message) GetArgString() string {
 	return strings.TrimSpace(argString)
 }
 
+// a Google key pair represents a custom search api key and a custom search id.
+type googleKeyPair struct {
+	SearchID string `json:"search_id"`
+	APIKey   string `json:"api_key"`
+}
+
+// Turns the key pair into a string for sending via a channel
+func (g googleKeyPair) toString() string {
+	return fmt.Sprintf("%s %s", g.APIKey, g.SearchID)
+}
+
 // A FuncMap is a map of command strings to response functions.
 // It is use for routing comamnds to responses.
 type FuncMap map[string]ResponseFunc
 
+// ResponseFunc is a handler for a bot command.
 type ResponseFunc func(m *message)
 
 // Initialise a JarvisBot.
 // lg is optional.
-func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, config map[string]string) *JarvisBot {
+func InitJarvis(configJSON []byte, lg *log.Logger) *JarvisBot {
 	// We'll use random numbers throughout JarvisBot
 	rand.Seed(time.Now().UTC().UnixNano())
 
@@ -65,8 +91,28 @@ func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, config map[string
 		lg = log.New(os.Stdout, "[jarvis] ", 0)
 	}
 
+	var cfg config
+	err := json.Unmarshal(configJSON, &cfg)
+	if err != nil {
+		lg.Fatalf("cannot unmarshal config json: %s", err)
+	}
+
+	if cfg.TelegramAPIKey == "" {
+		log.Fatalf("config.json exists but doesn't contain a Telegram API Key! Read https://core.telegram.org/bots#3-how-do-i-create-a-bot on how to get one!")
+	}
+
+	botName := cfg.Name
+	if botName == "" {
+		log.Fatalf("config.json exists but doesn't contain a bot name. Set your botname when registering with The Botfather.")
+	}
+
+	bot, err := telebot.NewBot(cfg.TelegramAPIKey)
+	if err != nil {
+		log.Fatalf("error creating new bot, dude %s", err)
+	}
+
 	keyChannel := make(chan string)
-	j := &JarvisBot{Name: name, bot: bot, log: lg, keys: config, googleKeyChan: keyChannel}
+	j := &JarvisBot{Name: botName, bot: bot, log: lg, keys: cfg, googleKeyChan: keyChannel}
 
 	j.fmap = j.getDefaultFuncMap()
 
@@ -79,7 +125,7 @@ func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, config map[string
 
 	db, err := bolt.Open(path.Join(pwd, "jarvis.db"), 0600, nil)
 	if err != nil {
-		lg.Fatal(err)
+		lg.Fatal("unable to open bolt db: %s", err)
 	}
 	j.db = db
 	createAllBuckets(db)
@@ -98,7 +144,7 @@ func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, config map[string
 	// We loop through all the googleKeys and shove them into a channel
 	// This is a fucking hack. I know. LOL.
 	j.GoSafely(func() {
-		googleKeys := getGoogleKeys(j.keys)
+		googleKeys := j.keys.SearchKeys
 		if len(googleKeys) < 1 {
 			return
 		}
@@ -116,29 +162,9 @@ func InitJarvis(name string, bot *telebot.Bot, lg *log.Logger, config map[string
 	return j
 }
 
-type googleKeyPair struct {
-	SearchID string
-	APIKey   string
-}
-
-func (g googleKeyPair) toString() string {
-	return fmt.Sprintf("%s %s", g.APIKey, g.SearchID)
-}
-
-func getGoogleKeys(keys map[string]string) []googleKeyPair {
-	res := []googleKeyPair{}
-	for k, v := range keys {
-		if strings.Contains(strings.ToLower(k), "google_api_key") {
-			id := k[len(k)-1:]
-			searchID, ok := keys["google_search_id_"+id]
-			if !ok {
-				continue
-			}
-			res = append(res, googleKeyPair{SearchID: searchID, APIKey: v})
-		}
-	}
-
-	return res
+// Listen exposes the telebot Listen API.
+func (j *JarvisBot) Listen(subscription chan telebot.Message, timeout time.Duration) {
+	j.bot.Listen(subscription, timeout)
 }
 
 // Get the built-in, default FuncMap.
@@ -199,6 +225,7 @@ func (j *JarvisBot) Router(msg telebot.Message) {
 	}
 }
 
+// CloseDB closes the connection with the bolt db.
 func (j *JarvisBot) CloseDB() {
 	j.db.Close()
 }

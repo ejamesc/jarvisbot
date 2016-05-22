@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"log"
 	"os"
@@ -25,29 +24,9 @@ func main() {
 		log.Fatalf("error reading config file! Boo: %s", err)
 	}
 
-	var config map[string]string
-	err = json.Unmarshal(configJSON, &config)
-	if err != nil {
-		log.Fatalf("failed to parse config.json: %s", err)
-	}
-
-	telegramAPIKey, ok := config["telegram_api_key"]
-	if !ok {
-		log.Fatalf("config.json exists but doesn't contain a Telegram API Key! Read https://core.telegram.org/bots#3-how-do-i-create-a-bot on how to get one!")
-	}
-	botName, ok := config["name"]
-	if !ok {
-		log.Fatalf("config.json exists but doesn't contain a bot name. Set your botname when registering with The Botfather.")
-	}
-
-	bot, err := telebot.NewBot(telegramAPIKey)
-	if err != nil {
-		log.Fatalf("error creating new bot, dude %s", err)
-	}
-
 	logger := log.New(os.Stdout, "[jarvis] ", 0)
 
-	jb := jarvisbot.InitJarvis(botName, bot, logger, config)
+	jb := jarvisbot.InitJarvis(configJSON, logger)
 	defer jb.CloseDB()
 
 	jb.AddFunction("/laugh", jb.SendLaugh)
@@ -69,7 +48,7 @@ func main() {
 	})
 
 	messages := make(chan telebot.Message)
-	bot.Listen(messages, 1*time.Second)
+	jb.Listen(messages, 1*time.Second)
 
 	for message := range messages {
 		jb.Router(message)
