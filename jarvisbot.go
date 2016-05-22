@@ -184,6 +184,10 @@ func (j *JarvisBot) Router(msg telebot.Message) {
 	if msg.Chat.IsGroupChat() {
 		j.GoSafely(func() { j.saveUsernameSafely(&msg.Chat, &msg.Sender) })
 	}
+	// Don't respond to forwarded commands
+	if msg.IsForwarded() {
+		return
+	}
 	jmsg := j.parseMessage(&msg)
 	if jmsg.Cmd != "" {
 		j.log.Printf("[%s][id: %d] command: %s, args: %s", time.Now().Format(time.RFC3339), jmsg.ID, jmsg.Cmd, jmsg.GetArgString())
