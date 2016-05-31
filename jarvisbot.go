@@ -22,6 +22,7 @@ import (
 
 var exchange_rate_bucket_name = []byte("rates")
 var group_usernames_bucket_name = []byte("groups")
+var file_cache_bucket_name = []byte("file_ids")
 
 // JarvisBot is the main struct. All response funcs bind to this.
 type JarvisBot struct {
@@ -257,6 +258,10 @@ func createAllBuckets(db *bolt.DB) error {
 			return err
 		}
 		_, err = tx.CreateBucketIfNotExists(group_usernames_bucket_name)
+		if err != nil {
+			return err
+		}
+		_, err = tx.CreateBucketIfNotExists(file_cache_bucket_name)
 		if err != nil {
 			return err
 		}
