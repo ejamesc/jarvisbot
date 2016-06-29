@@ -33,6 +33,7 @@ func main() {
 	jb.AddFunction("/neverforget", jb.NeverForget)
 	jb.AddFunction("/touch", jb.Touch)
 	jb.AddFunction("/hanar", jb.Hanar)
+	jb.AddFunction("/logic", jb.SendLogic)
 	jb.AddFunction("/tellthatto", jb.TellThatTo)
 	jb.AddFunction("/kanjiklub", jb.TellThatTo)
 	jb.AddFunction("/ducks", jb.SendImage("quack quack motherfucker"))
