@@ -51,6 +51,18 @@ func (j *JarvisBot) SendLogic(msg *message) {
 	fn(msg)
 }
 
+// Yank returns a gif of @jellykaya being yanked off-stage by @vishnup
+func (j *JarvisBot) Yank(msg *message) {
+	j.bot.SendChatAction(msg.Chat, telebot.UploadingPhoto)
+
+	fn, err := j.sendFileWrapper("data/yank.gif", "gif")
+	if err != nil {
+		j.log.Printf("error sending file: %s", err)
+		return
+	}
+	fn(msg)
+}
+
 // Hanar returns a picture of a Hanar. Thx, @shawntan
 // Context: 'hanar, hanar, hanar' means 'yeah I get it, stop nagging'
 // in Singaporean Hokkien. The picture sent is a picture of a creature in

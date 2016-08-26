@@ -60,7 +60,7 @@ func (j *JarvisBot) PSI(msg *message) {
 			}
 		}
 
-		formatText := "\U0001F4AD PSI Readings (%s):\n* PSI (24hr): %s\n\n*PM2.5 (1hr): %s\n* PM2.5 (24hr): %s\n* PM10 (24hr): %s\n\n* SO2 (24hr): %s\n* NO2 (1hr): %s\n* O3 (8hr): %s\n* CO (8hr): %s\n\n\U0001F550 %s"
+		formatText := "\U0001F4AD PSI Readings (%s):\n* PSI (24hr): %s\n\n* PM2.5 (1hr): %s\n* PM2.5 (24hr): %s\n* PM10 (24hr): %s\n\n* SO2 (24hr): %s\n* NO2 (1hr): %s\n* O3 (8hr): %s\n* CO (8hr): %s\n\n\U0001F550 %s"
 		msgText := ""
 		switch direction {
 		case "north", "n":
