@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/boltdb/bolt"
@@ -48,6 +47,29 @@ func contentType(u *url.URL) string {
 		return "application/octet-stream"
 	}
 	defer resp.Body.Close()
+	return resp.Header.Get("Content-Type")
+}
+
+func extFromContentType(ct string) string {
+	switch ct {
+	case "image/jpeg":
+		return ".jpg"
+	case "image/png":
+		return ".png"
+	case "image/gif":
+		return ".gif"
+	default:
+		// not an image
+		return ""
+	}
+}
+
+func contentType(u *url.URL) string {
+	resp, err := http.Head(u.String())
+	defer resp.Body.Close()
+	if err != nil {
+		return "application/octet-stream"
+	}
 	return resp.Header.Get("Content-Type")
 }
 
