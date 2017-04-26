@@ -51,6 +51,18 @@ func (j *JarvisBot) SendLogic(msg *message) {
 	fn(msg)
 }
 
+// SendKid sends Tin's kid meme.
+func (j *JarvisBot) SendKid(msg *message) {
+	j.bot.SendChatAction(msg.Chat, telebot.UploadingPhoto)
+
+	fn, err := j.sendFileWrapper("data/thiskid.jpg", "photo")
+	if err != nil {
+		j.log.Printf("error sending file: %s", err)
+		return
+	}
+	fn(msg)
+}
+
 // Yank returns a gif of @jellykaya being yanked off-stage by @vishnup
 func (j *JarvisBot) Yank(msg *message) {
 	j.bot.SendChatAction(msg.Chat, telebot.UploadingPhoto)

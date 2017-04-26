@@ -34,6 +34,7 @@ func main() {
 	jb.AddFunction("/touch", jb.Touch)
 	jb.AddFunction("/hanar", jb.Hanar)
 	jb.AddFunction("/logic", jb.SendLogic)
+	jb.AddFunction("/thiskid", jb.SendKid)
 	jb.AddFunction("/yank", jb.Yank)
 	jb.AddFunction("/tellthatto", jb.TellThatTo)
 	jb.AddFunction("/kanjiklub", jb.TellThatTo)
