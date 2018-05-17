@@ -40,6 +40,7 @@ func main() {
 	jb.AddFunction("/kanjiklub", jb.TellThatTo)
 	jb.AddFunction("/ducks", jb.SendImage("quack quack motherfucker"))
 	jb.AddFunction("/chickens", jb.SendImage("cluck cluck motherfucker"))
+	jb.AddFunction("/xkcd", jb.SearchXkcd)
 
 	jb.GoSafely(func() {
 		logger.Println("Scheduling exchange rate update")
@@ -47,6 +48,16 @@ func main() {
 			time.Sleep(1 * time.Hour)
 			jb.RetrieveAndSaveExchangeRates()
 			logger.Printf("[%s] exchange rates updated!", time.Now().Format(time.RFC3339))
+		}
+	})
+
+	jb.GoSafely(func() {
+		logger.Println("Started crawling for new xkcd comics")
+		for {
+			time.Sleep(24 * time.Hour)
+			jb.CrawlXkcd(pwd)
+			jb.LoadComics()
+			logger.Println("[%s] xkcd comics updated!", time.Now().Format(time.RFC3339))
 		}
 	})
 

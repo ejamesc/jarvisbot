@@ -13,7 +13,7 @@ import (
 
 	"github.com/boltdb/bolt"
 	"github.com/kardianos/osext"
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 	"github.com/tucnak/telebot"
 )
 
@@ -31,6 +31,17 @@ func extFromContentType(ct string) string {
 		// not an image
 		return ""
 	}
+}
+
+func stringSliceCount(a string, list []string) int {
+	count := 0
+	for _, b := range list {
+		if b == a {
+			count += 1
+		}
+	}
+
+	return count
 }
 
 func processKeyFromChan(input string) (key string, id string) {
